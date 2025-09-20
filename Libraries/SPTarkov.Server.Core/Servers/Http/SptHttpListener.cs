@@ -170,7 +170,6 @@ public class SptHttpListener(
         // Route doesn't exist or response is not properly set up
         if (string.IsNullOrEmpty(output))
         {
-            logger.Error(serverLocalisationService.GetText("unhandled_response", context.Request.Path.ToString()));
             output = httpResponseUtil.GetBody<object?>(
                 null,
                 BackendErrorCodes.HTTPNotFound,
