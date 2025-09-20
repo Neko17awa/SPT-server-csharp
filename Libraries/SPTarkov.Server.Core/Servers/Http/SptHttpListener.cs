@@ -27,18 +27,18 @@ public class SptHttpListener(
 {
     private static readonly ImmutableHashSet<string> SupportedMethods = ["GET", "PUT", "POST"];
 
-    public bool CanHandle(MongoId _, HttpRequest req)
+    public bool CanHandle(MongoId _, HttpContext context)
     {
-        return SupportedMethods.Contains(req.Method);
+        return SupportedMethods.Contains(context.Request.Method) && httpRouter.CanHandle(context);
     }
 
-    public async Task Handle(MongoId sessionId, RequestDelegate next, HttpContext context)
+    public async Task Handle(MongoId sessionId, HttpContext context)
     {
         switch (context.Request.Method)
         {
             case "GET":
             {
-                var response = await GetResponse(sessionId, next, context, null);
+                var response = await GetResponse(sessionId, context, null);
 
                 // Another handler is already handling this, or no handler was found.
                 if (response is null)
@@ -83,7 +83,7 @@ public class SptHttpListener(
                     }
                 }
 
-                var response = await GetResponse(sessionId, next, context, body);
+                var response = await GetResponse(sessionId, context, body);
 
                 // Another handler is already handling this, or no handler was found.
                 if (response is null)
@@ -163,22 +163,26 @@ public class SptHttpListener(
         }
     }
 
-    public async ValueTask<string?> GetResponse(MongoId sessionId, RequestDelegate next, HttpContext context, string? body)
+    public async ValueTask<string> GetResponse(MongoId sessionId, HttpContext context, string? body)
     {
         var output = await httpRouter.GetResponse(context.Request, sessionId, body);
+
+        // Route doesn't exist or response is not properly set up
+        if (string.IsNullOrEmpty(output))
+        {
+            logger.Error(serverLocalisationService.GetText("unhandled_response", context.Request.Path.ToString()));
+            output = httpResponseUtil.GetBody<object?>(
+                null,
+                BackendErrorCodes.HTTPNotFound,
+                $"UNHANDLED RESPONSE: {context.Request.Path.ToString()}"
+            );
+        }
 
         if (ProgramStatics.ENTRY_TYPE() != EntryType.RELEASE)
         {
             // Parse quest info into object
             var log = new Request(context.Request.Method, new RequestData(context.Request.Path.ToString(), context.Request.Headers));
             requestsLogger.Info($"REQUEST={jsonUtil.Serialize(log)}");
-        }
-
-        // Route doesn't exist or response is not properly set up, continue to next handlers.
-        if (string.IsNullOrEmpty(output))
-        {
-            await next(context);
-            return null;
         }
 
         return output;

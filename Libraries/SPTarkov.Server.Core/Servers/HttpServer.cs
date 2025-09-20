@@ -35,11 +35,11 @@ public class HttpServer(
             profileActivityService.SetActivityTimestamp(sessionId);
         }
 
-        var listener = httpListeners.FirstOrDefault(listener => listener.CanHandle(sessionId, context.Request));
+        var listener = httpListeners.FirstOrDefault(listener => listener.CanHandle(sessionId, context));
 
         if (listener != null)
         {
-            await listener.Handle(sessionId, next, context);
+            await listener.Handle(sessionId, context);
         }
         else
         {
