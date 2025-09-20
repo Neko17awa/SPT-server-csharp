@@ -21,8 +21,7 @@ public class SptHttpListener(
     ISptLogger<SptHttpListener> logger,
     ISptLogger<RequestLogger> requestsLogger,
     JsonUtil jsonUtil,
-    HttpResponseUtil httpResponseUtil,
-    ServerLocalisationService serverLocalisationService
+    HttpResponseUtil httpResponseUtil
 ) : IHttpListener
 {
     private static readonly ImmutableHashSet<string> SupportedMethods = ["GET", "PUT", "POST"];
