@@ -9920,7 +9920,7 @@
       "sender": "System",
       "messageText": "<ch>Soon</ch><cz>Soon</cz><en>Soon</en><fr>Soon</fr><ge>Soon</ge><hu>Soon</hu><it>Soon</it><jp>Soon</jp><kr>Soon</kr><pl>Soon</pl><po>Soon</po><sk>Soon</sk><es>Soon</es><es-mx>Soon</es-mx><tu>Soon</tu><ru>Soon</ru><ro>Soon</ro>"
     },
-	"DEVELOPERSDEVELOPERSDEVELOPERS": {
+    "DEVELOPERSDEVELOPERSDEVELOPERS": {
       "items": [
         {
           "_id": "68cfd50ee772c30d4eed1d83",
@@ -9931,7 +9931,7 @@
           },
           "parentId": "64b996c9d0de4697180359b6"
         },
-		{
+        {
           "_id": "68cfd512f3b8de5d4d3df497",
           "_tpl": "5c0a5f6c86f774753654890e",
           "slotId": "main",
@@ -9940,7 +9940,7 @@
           },
           "parentId": "64b996c9d0de4697180359b6"
         },
-		{
+        {
           "_id": "68cfd51588ec9050105925aa",
           "_tpl": "56e294cdd2720b603a8b4575",
           "slotId": "main",
