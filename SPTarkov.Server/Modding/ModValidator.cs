@@ -90,13 +90,12 @@ public class ModValidator(ISptLogger<ModValidator> logger, ServerLocalisationSer
 
         foreach (var mod in modPackageData.Values)
         {
-            var name = $"{mod.Author}-{mod.Name}";
-            groupedMods.Add(name, [.. groupedMods.GetValueOrDefault(name) ?? [], mod]);
+            groupedMods.Add(mod.ModGuid, [.. groupedMods.GetValueOrDefault(mod.ModGuid) ?? [], mod]);
 
             // if there's more than one entry for a given mod it means there's at least 2 mods with the same author and name trying to load.
-            if (groupedMods[name].Count > 1)
+            if (groupedMods[mod.ModGuid].Count > 1)
             {
-                SkippedMods.Add(name);
+                SkippedMods.Add(mod.ModGuid);
             }
         }
 
