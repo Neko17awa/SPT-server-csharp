@@ -67,12 +67,7 @@ public class LauncherV2Callbacks(
     public ValueTask<string> CompatibleVersion()
     {
         return new ValueTask<string>(
-            httpResponseUtil.NoBody(
-                new LauncherV2VersionResponse
-                {
-                    Response = launcherV2Controller.SptVersion()
-                }
-            )
+            httpResponseUtil.NoBody(new LauncherV2VersionResponse { Response = launcherV2Controller.SptVersion() })
         );
     }
 
