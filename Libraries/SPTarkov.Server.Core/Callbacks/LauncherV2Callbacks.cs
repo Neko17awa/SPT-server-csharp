@@ -70,11 +70,7 @@ public class LauncherV2Callbacks(
             httpResponseUtil.NoBody(
                 new LauncherV2VersionResponse
                 {
-                    Response = new LauncherV2CompatibleVersion
-                    {
-                        SptVersion = launcherV2Controller.SptVersion(),
-                        EftVersion = launcherV2Controller.EftVersion(),
-                    },
+                    Response = launcherV2Controller.SptVersion()
                 }
             )
         );
