@@ -355,7 +355,7 @@
       },
       "preventPriceBeingBelowTraderBuyPrice": true,
       "useHideoutCraftMultiplier": true,
-      "hideoutCraftMultiplier": 0.5
+      "hideoutCraftMultiplier": 0.8
     }
   },
   "runIntervalSeconds": 8,
