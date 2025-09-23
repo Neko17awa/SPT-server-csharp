@@ -3,7 +3,6 @@ using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Services;
 using SPTarkov.Server.Core.Utils;
-using LogLevel = SPTarkov.Server.Core.Models.Spt.Logging.LogLevel;
 
 namespace SPTarkov.Server.Modding;
 
@@ -155,12 +154,11 @@ public class ModValidator(ISptLogger<ModValidator> logger, ServerLocalisationSer
     }
 
     /// <summary>
-    ///     Compile mod and add into class property "imported"
+    ///     Add into class property "Imported"
     /// </summary>
-    /// <param name="mod">Name of mod to compile/add</param>
+    /// <param name="mod">Mod details</param>
     protected void AddMod(SptMod mod)
     {
-        // Add mod to imported list
         Imported.Add(mod.ModMetadata.ModGuid, mod);
         logger.Info(
             localisationService.GetText(
@@ -168,7 +166,7 @@ public class ModValidator(ISptLogger<ModValidator> logger, ServerLocalisationSer
                 new
                 {
                     name = mod.ModMetadata.Name,
-                    version = mod.ModMetadata.Version,
+                    version = $"{mod.ModMetadata.Version} {mod.ModMetadata.SptVersion}",
                     author = mod.ModMetadata.Author,
                 }
             )
