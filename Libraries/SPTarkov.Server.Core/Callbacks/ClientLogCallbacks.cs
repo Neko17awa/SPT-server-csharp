@@ -29,6 +29,7 @@ public class ClientLogCallbacks(
         if (request.Message == "-1")
         {
             HandleClientLog();
+            request.Level = LogLevel.Debug;
         }
         clientLogController.ClientLog(request);
         return new ValueTask<string>(httpResponseUtil.NullResponse());
