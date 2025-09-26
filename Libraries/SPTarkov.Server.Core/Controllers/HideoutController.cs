@@ -1255,8 +1255,7 @@ public class HideoutController(
 
             if (
                 paymentHelper.IsMoneyTpl(item.inventoryItem.Template)
-                && item.inventoryItem.Upd is not null
-                && item.inventoryItem.Upd.StackObjectsCount is not null
+                && item.inventoryItem.Upd?.StackObjectsCount != null
                 && item.inventoryItem.Upd.StackObjectsCount > item.requestedItem.Count
             )
             {

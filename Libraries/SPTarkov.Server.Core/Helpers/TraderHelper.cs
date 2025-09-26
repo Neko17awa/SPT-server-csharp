@@ -48,39 +48,35 @@ public class TraderHelper(
     }
 
     /// <summary>
-    ///     Get a trader base object, update profile to reflect players current standing in profile
+    ///     Get a trader base object, update profile to reflect players current standing in profile (if session id provided)
     ///     when trader not found in profile
     /// </summary>
-    /// <param name="traderID">Traders Id to get</param>
-    /// <param name="sessionID">Players id</param>
+    /// <param name="traderId">Traders Id to return base of</param>
+    /// <param name="sessionId">OPTIONAL - Players id</param>
     /// <returns>Trader base</returns>
-    public TraderBase? GetTrader(string traderID, MongoId sessionID)
+    public TraderBase? GetTrader(MongoId traderId, MongoId? sessionId = null)
     {
-        if (traderID == "ragfair")
+        if (sessionId is not null)
         {
-            return new TraderBase { Currency = CurrencyType.RUB };
+            var pmcData = profileHelper.GetPmcProfile(sessionId.Value);
+            if (pmcData == null)
+            {
+                throw new Exception(serverLocalisationService.GetText("trader-unable_to_find_profile_with_id", sessionId));
+            }
+
+            // Profile has traderInfo dict (profile beyond creation stage) but no requested trader in profile
+            if (pmcData?.TradersInfo != null && !(pmcData?.TradersInfo?.ContainsKey(traderId) ?? false))
+            {
+                // Add trader values to profile
+                ResetTrader(sessionId.Value, traderId);
+                LevelUp(traderId, pmcData);
+            }
         }
 
-        var traderIdMongo = new MongoId(traderID);
-
-        var pmcData = profileHelper.GetPmcProfile(sessionID);
-        if (pmcData == null)
-        {
-            throw new Exception(serverLocalisationService.GetText("trader-unable_to_find_profile_with_id", sessionID));
-        }
-
-        // Profile has traderInfo dict (profile beyond creation stage) but no requested trader in profile
-        if (pmcData?.TradersInfo != null && !(pmcData?.TradersInfo?.ContainsKey(traderIdMongo) ?? false))
-        {
-            // Add trader values to profile
-            ResetTrader(sessionID, traderIdMongo);
-            LevelUp(traderIdMongo, pmcData);
-        }
-
-        var traderBase = databaseService.GetTrader(traderIdMongo).Base;
+        var traderBase = databaseService.GetTrader(traderId)?.Base;
         if (traderBase == null)
         {
-            logger.Error(serverLocalisationService.GetText("trader-unable_to_find_trader_by_id", traderID));
+            logger.Error(serverLocalisationService.GetText("trader-unable_to_find_trader_by_id", traderId.ToString()));
         }
 
         return traderBase;
