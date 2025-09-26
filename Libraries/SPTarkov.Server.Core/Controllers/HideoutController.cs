@@ -846,7 +846,7 @@ public class HideoutController(
 
         // Build an array of the tools that need to be returned to the player
         List<List<Item>> toolsToSendToPlayer = [];
-        pmcData.Hideout.Production.TryGetValue(prodId.Value, out Production hideoutProduction);
+        pmcData.Hideout.Production.TryGetValue(prodId.Value, out var hideoutProduction);
         if (hideoutProduction.SptRequiredTools?.Count > 0)
         {
             foreach (var tool in hideoutProduction.SptRequiredTools)
