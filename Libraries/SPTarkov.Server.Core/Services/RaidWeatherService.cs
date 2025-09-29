@@ -27,13 +27,13 @@ public class RaidWeatherService(
     public void GenerateWeather(Season currentSeason)
     {
         // When to start generating weather from in milliseconds
-        var staringTimestamp = timeUtil.GetTodayMidnightTimeStamp();
+        var startingTimestamp = timeUtil.GetTodayMidnightTimeStamp();
 
         // How far into future do we generate weather
-        var futureTimestampToReach = staringTimestamp + timeUtil.GetHoursAsSeconds(WeatherConfig.Weather.GenerateWeatherAmountHours ?? 1);
+        var futureTimestampToReach = startingTimestamp + timeUtil.GetHoursAsSeconds(WeatherConfig.Weather.GenerateWeatherAmountHours ?? 1);
 
         // Keep adding new weather until we have reached desired future date
-        var nextTimestamp = staringTimestamp;
+        var nextTimestamp = startingTimestamp;
         while (nextTimestamp <= futureTimestampToReach)
         {
             var newWeatherToAddToCache = weatherGenerator.GenerateWeather(currentSeason, nextTimestamp);
