@@ -90,8 +90,7 @@ public class WeatherGenerator(
 
     protected SeasonalValues GetWeatherValuesBySeason(Season currentSeason)
     {
-        var result = WeatherConfig.Weather.SeasonValues.TryGetValue(currentSeason.ToString(), out var value);
-        if (!result)
+        if (!WeatherConfig.Weather.SeasonValues.TryGetValue(currentSeason.ToString(), out var value))
         {
             return WeatherConfig.Weather.SeasonValues["default"];
         }
