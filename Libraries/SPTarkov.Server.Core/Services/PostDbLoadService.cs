@@ -394,15 +394,15 @@ public class PostDbLoadService(
         var locations = databaseService.GetLocations().GetDictionary();
 
         var pmcTypes = new HashSet<string> { "pmcUSEC", "pmcBEAR" };
-        foreach (var locationkvP in locations)
+        foreach (var (_, location) in locations)
         {
-            if (locationkvP.Value?.Base?.BossLocationSpawn is null)
+            if (location?.Base?.BossLocationSpawn is null)
             {
                 continue;
             }
 
-            locationkvP.Value.Base.BossLocationSpawn = locationkvP
-                .Value.Base.BossLocationSpawn.Where(bossSpawn => !pmcTypes.Contains(bossSpawn.BossName))
+            location.Base.BossLocationSpawn = location
+                .Base.BossLocationSpawn.Where(bossSpawn => !pmcTypes.Contains(bossSpawn.BossName))
                 .ToList();
         }
     }
