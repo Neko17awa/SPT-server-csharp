@@ -351,6 +351,12 @@ public class HideoutHelper(
                 continue;
             }
 
+            // Some crafts (that need continuous power) can be interrupted
+            if (craft.Interrupted.GetValueOrDefault(false))
+            {
+                continue;
+            }
+
             // Special handling required
             if (craft.IsCraftOfType(HideoutAreas.ScavCase))
             {
