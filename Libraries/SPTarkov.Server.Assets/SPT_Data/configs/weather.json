@@ -257,7 +257,7 @@
         "CLOUDY": 3
       },
       "default": {
-        "SUNNY": 7,
+        "SUNNY": 13,
         "RAINY": 7,
         "CLOUDY": 7
       }
