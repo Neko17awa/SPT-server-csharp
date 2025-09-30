@@ -2,6 +2,7 @@
   <Import Project="..\..\Build.props" />
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>TestMod2</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\SPTarkov.Common\SPTarkov.Common.csproj" />
@@ -16,10 +17,13 @@
       <Resources Include="$(ProjectDir)Resources\**\*.*" />
     </ItemGroup>
     <!-- Copies the output dll -->
-    <Copy SourceFiles="@(OutputDLL);" DestinationFolder="$(SolutionDir)\SPTarkov.Server\bin\$(Configuration)\net9.0\user\mods\TestMod" />
+    <Copy
+      SourceFiles="@(OutputDLL);"
+      DestinationFolder="$(SolutionDir)\SPTarkov.Server\bin\$(Configuration)\net9.0\user\mods\$(TargetName)"
+    />
     <Copy
       SourceFiles="@(Resources);"
-      DestinationFolder="$(SolutionDir)\SPTarkov.Server\bin\$(Configuration)\net9.0\user\mods\TestMod\Resources\%(RecursiveDir)"
+      DestinationFolder="$(SolutionDir)\SPTarkov.Server\bin\$(Configuration)\net9.0\user\mods\$(TargetName)\Resources\%(RecursiveDir)"
     />
   </Target>
 </Project>
