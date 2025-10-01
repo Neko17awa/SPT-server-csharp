@@ -518,7 +518,9 @@
       ],
       "questConfig": {
         "Exploration": {
+          "minExtracts": 1,
           "maxExtracts": 4,
+          "minExtractsWithSpecificExit": 1,
           "maxExtractsWithSpecificExit": 2,
           "possibleSkillRewards": [
             "Endurance",
@@ -1606,8 +1608,10 @@
       ],
       "questConfig": {
         "Exploration": {
+          "minExtracts": 5,
           "maxExtracts": 15,
-          "maxExtractsWithSpecificExit": 4,
+          "minExtractsWithSpecificExit": 3,
+          "maxExtractsWithSpecificExit": 7,
           "possibleSkillRewards": [
             "Endurance",
             "Strength",
@@ -2628,7 +2632,9 @@
             "Strength",
             "Vitality"
           ],
+          "minExtracts": 1,
           "maxExtracts": 3,
+          "minExtractsWithSpecificExit": 1,
           "maxExtractsWithSpecificExit": 1,
           "specificExits": {
             "chance": 20,

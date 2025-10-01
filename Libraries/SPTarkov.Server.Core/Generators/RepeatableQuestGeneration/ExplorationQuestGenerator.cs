@@ -116,10 +116,10 @@ public class ExplorationQuestGenerator(
         out LocationInfo? locationInfo
     )
     {
-        if (pool.Pool?.Exploration?.Locations?.Count is null or 0)
+        if (pool.Pool.Exploration.Locations?.Count is null or 0)
         {
             // there are no more locations left for exploration; delete it as a possible quest type
-            pool.Types = pool.Types?.Where(t => t != "Exploration").ToList();
+            pool.Types = pool.Types.Where(t => t != "Exploration").ToList();
             locationInfo = null;
             return false;
         }
@@ -129,7 +129,7 @@ public class ExplorationQuestGenerator(
         var locationKey = randomUtil.DrawRandomFromDict(pool.Pool.Exploration.Locations)[0];
 
         // Make the location info object
-        var locationTarget = pool.Pool!.Exploration!.Locations![locationKey];
+        var locationTarget = pool.Pool.Exploration.Locations![locationKey];
 
         var requiresSpecificExtract = randomUtil.GetChance100(repeatableConfig.QuestConfig.Exploration.SpecificExits.Chance);
 
@@ -146,15 +146,19 @@ public class ExplorationQuestGenerator(
     /// <summary>
     ///     Get the number of times the player needs to exit
     /// </summary>
-    /// <param name="config">Exploration config</param>
+    /// <param name="explorationConfig">Exploration config</param>
     /// <param name="requiresSpecificExtract">Is this a specific extract</param>
     /// <returns>Number of exit requirements</returns>
-    protected int GetNumberOfExits(Exploration config, bool requiresSpecificExtract)
+    protected int GetNumberOfExits(Exploration explorationConfig, bool requiresSpecificExtract)
     {
-        // Different max extract count when specific extract needed
-        var exitTimesMax = requiresSpecificExtract ? config.MaximumExtractsWithSpecificExit : config.MaximumExtracts + 1;
+        var exitTimesMin = requiresSpecificExtract ? explorationConfig.MinimumExtractsWithSpecificExit : explorationConfig.MinimumExtracts;
 
-        return randomUtil.RandInt(1, exitTimesMax);
+        // Different max extract count when specific extract needed
+        var exitTimesMax = requiresSpecificExtract
+            ? explorationConfig.MaximumExtractsWithSpecificExit + 1
+            : explorationConfig.MaximumExtracts + 1;
+
+        return randomUtil.RandInt(exitTimesMin, exitTimesMax);
     }
 
     /// <summary>

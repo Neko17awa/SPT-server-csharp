@@ -362,10 +362,22 @@ public record RepeatableQuestTypesConfig
 public record Exploration : BaseQuestConfig
 {
     /// <summary>
+    ///     Minimum extract count that a per map extract requirement can be generated with
+    /// </summary>
+    [JsonPropertyName("minExtracts")]
+    public required int MinimumExtracts { get; set; }
+
+    /// <summary>
     ///     Maximum extract count that a per map extract requirement can be generated with
     /// </summary>
     [JsonPropertyName("maxExtracts")]
     public required int MaximumExtracts { get; set; }
+
+    /// <summary>
+    ///     Minimum extract count that a specific extract can be generated with
+    /// </summary>
+    [JsonPropertyName("minExtractsWithSpecificExit")]
+    public required int MinimumExtractsWithSpecificExit { get; set; }
 
     /// <summary>
     ///     Maximum extract count that a specific extract can be generated with
