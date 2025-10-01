@@ -281,7 +281,7 @@
           0.03,
           0.03
         ],
-        "rewardSpread": 0.4,
+        "rewardSpread": 0.25,
         "skillRewardChance": [
           0,
           1,
@@ -1388,7 +1388,7 @@
           0.06,
           0.07
         ],
-        "rewardSpread": 0.5,
+        "rewardSpread": 0.35,
         "skillRewardChance": [
           0,
           5,
@@ -2550,7 +2550,7 @@
           0.04,
           0.05
         ],
-        "rewardSpread": 0.5,
+        "rewardSpread": 0.35,
         "skillRewardChance": [
           0,
           0,
