@@ -1,3 +1,4 @@
+using System.Globalization;
 using SPTarkov.Server.Core.Helpers;
 using SPTarkov.Server.Core.Models.Eft.Weather;
 using SPTarkov.Server.Core.Models.Enums;
@@ -21,22 +22,22 @@ public abstract class AbstractWeatherPresetGeneratorBase(WeightedRandomHelper we
 
     protected double GetWeightedClouds(PresetWeights weather)
     {
-        return double.Parse(weightedRandomHelper.GetWeightedValue(weather.Clouds));
+        return double.Parse(weightedRandomHelper.GetWeightedValue(weather.Clouds), CultureInfo.InvariantCulture);
     }
 
     protected double GetWeightedWindSpeed(PresetWeights weather)
     {
-        return double.Parse(weightedRandomHelper.GetWeightedValue(weather.WindSpeed));
+        return double.Parse(weightedRandomHelper.GetWeightedValue(weather.WindSpeed), CultureInfo.InvariantCulture);
     }
 
     protected double GetWeightedFog(PresetWeights weather)
     {
-        return double.Parse(weightedRandomHelper.GetWeightedValue(weather.Fog));
+        return double.Parse(weightedRandomHelper.GetWeightedValue(weather.Fog), CultureInfo.InvariantCulture);
     }
 
     protected double GetWeightedRain(PresetWeights weather)
     {
-        return double.Parse(weightedRandomHelper.GetWeightedValue(weather.Rain));
+        return double.Parse(weightedRandomHelper.GetWeightedValue(weather.Rain), CultureInfo.InvariantCulture);
     }
 
     protected double GetRandomDouble(double min, double max, int precision = 3)
