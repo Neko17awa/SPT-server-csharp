@@ -177,7 +177,7 @@ public class CompletionQuestGenerator(
     /// <returns>Filtered selection, or original if null or empty</returns>
     protected HashSet<MongoId> GetWhitelistedItemSelection(HashSet<MongoId> itemSelection, int pmcLevel)
     {
-        var itemWhitelist = databaseService.GetTemplates().RepeatableQuests?.Data?.Completion?.ItemsWhitelist;
+        var itemWhitelist = databaseService.GetTemplates().RepeatableQuests.Data?.Completion?.ItemsWhitelist;
 
         // Whitelist doesn't exist or is empty, return original
         if (itemWhitelist is null || itemWhitelist.Count == 0)
@@ -186,7 +186,7 @@ public class CompletionQuestGenerator(
         }
 
         // Filter and concatenate items according to current player level
-        var itemIdsWhitelisted = itemWhitelist.Where(p => p.MinPlayerLevel <= pmcLevel).SelectMany(x => x.ItemIds).ToHashSet(); //.Aggregate((a, p) => a.Concat(p.ItemIds), []);
+        var itemIdsWhitelisted = itemWhitelist.Where(p => p.MinPlayerLevel <= pmcLevel).SelectMany(x => x.ItemIds ?? []).ToHashSet(); //.Aggregate((a, p) => a.Concat(p.ItemIds), []);
 
         var filteredSelection = itemSelection
             .Where(x =>
@@ -211,7 +211,7 @@ public class CompletionQuestGenerator(
     /// <returns>Filtered selection, or original if null or empty</returns>
     protected HashSet<MongoId> GetBlacklistedItemSelection(HashSet<MongoId> itemSelection, int pmcLevel)
     {
-        var itemBlacklist = databaseService.GetTemplates().RepeatableQuests?.Data?.Completion?.ItemsBlacklist;
+        var itemBlacklist = databaseService.GetTemplates().RepeatableQuests.Data?.Completion?.ItemsBlacklist;
 
         // Blacklist doesn't exist or is empty, return original
         if (itemBlacklist is null || itemBlacklist.Count == 0)
@@ -222,7 +222,7 @@ public class CompletionQuestGenerator(
         // Filter and concatenate the arrays according to current player level
         var itemIdsBlacklisted = itemBlacklist
             .Where(blacklist => blacklist.MinPlayerLevel <= pmcLevel)
-            .SelectMany(blacklist => blacklist.ItemIds)
+            .SelectMany(blacklist => blacklist.ItemIds ?? [])
             .ToHashSet(); //.Aggregate(List<ItemsBlacklist> , (a, p) => a.Concat(p.ItemIds) );
 
         var filteredSelection = itemSelection
@@ -288,7 +288,7 @@ public class CompletionQuestGenerator(
             usedItemIndexes.Add(chosenItemIndex);
 
             var tplChosen = itemSelection[chosenItemIndex];
-            var itemPrice = itemHelper.GetItemPrice(tplChosen).Value;
+            var itemPrice = itemHelper.GetItemPrice(tplChosen)!.Value;
             var minValue = completionConfig.MinimumRequestedAmount;
             var maxValue = completionConfig.MaximumRequestedAmount;
 
@@ -308,7 +308,7 @@ public class CompletionQuestGenerator(
 
             // Push a CompletionCondition with the item and the amount of the item into quest
             chosenRequirementItemsTpls.Add(tplChosen);
-            quest.Conditions.AvailableForFinish.Add(GenerateCondition(tplChosen, value, repeatableConfig.QuestConfig.CompletionConfig));
+            quest.Conditions.AvailableForFinish!.Add(GenerateCondition(tplChosen, value, repeatableConfig.QuestConfig.CompletionConfig));
 
             // Is there budget left for more items
             if (roublesBudget > 0)

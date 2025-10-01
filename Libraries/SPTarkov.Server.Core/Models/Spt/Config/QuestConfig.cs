@@ -461,19 +461,19 @@ public record CompletionConfig : BaseQuestConfig
     ///     Should the supplied items be required FiR
     /// </summary>
     [JsonPropertyName("requiredItemsAreFiR")]
-    public bool? RequiredItemsAreFiR { get; set; }
+    public required bool RequiredItemsAreFiR { get; set; }
 
     /// <summary>
-    ///     Should the supplied items be required FiR
+    ///     Min/Max durability requirements for the item
     /// </summary>
     [JsonPropertyName("requiredItemMinDurabilityMinMax")]
-    public MinMax<double>? RequiredItemMinDurabilityMinMax { get; set; }
+    public required MinMax<double> RequiredItemMinDurabilityMinMax { get; set; }
 
     /// <summary>
     ///     Blacklisted item types to not collect
     /// </summary>
     [JsonPropertyName("requiredItemTypeBlacklist")]
-    public HashSet<MongoId>? RequiredItemTypeBlacklist { get; set; }
+    public required HashSet<MongoId> RequiredItemTypeBlacklist { get; set; }
 }
 
 public record Pickup : BaseQuestConfig
