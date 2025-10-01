@@ -76,17 +76,13 @@ public class PaymentService(
         // Track the total amount of all currencies.
         var totalCurrencyAmount = 0d;
 
-        // TODO: PMC flea offers use a transaction id of "ragfair", hacky
-        var isPmcFleaPurchase = request.TransactionId == "ragfair";
-        var requestTransactionId = isPmcFleaPurchase ? MongoId.Empty() : new MongoId(request.TransactionId);
+        var requestTransactionId = new MongoId(request.TransactionId);
 
         // Who is recipient of money player is sending
-        var payToTrader = !isPmcFleaPurchase && traderHelper.TraderExists(requestTransactionId);
+        var payToTrader = request.Type == "buy_from_ragfair_trader" && traderHelper.TraderExists(requestTransactionId);
 
         // May need to convert to trader currency
-        var trader = isPmcFleaPurchase
-            ? new TraderBase { Currency = CurrencyType.RUB }
-            : traderHelper.GetTrader(requestTransactionId, sessionID);
+        var trader = payToTrader ? traderHelper.GetTrader(requestTransactionId, sessionID) : new TraderBase { Currency = CurrencyType.RUB }; // TODO: cleanup
 
         // Loop through each type of currency involved in the trade
         foreach (var (currencyTpl, currencyAmount) in currencyAmounts)
