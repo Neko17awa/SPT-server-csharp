@@ -154,19 +154,17 @@ public class ExplorationQuestGenerator(
     /// <summary>
     ///     Get the number of times the player needs to exit
     /// </summary>
-    /// <param name="explorationConfigConfig">Exploration config</param>
+    /// <param name="explorationConfig">Exploration config</param>
     /// <param name="requiresSpecificExtract">Is this a specific extract</param>
     /// <returns>Number of exit requirements</returns>
-    protected int GetNumberOfExits(ExplorationConfig explorationConfigConfig, bool requiresSpecificExtract)
+    protected int GetNumberOfExits(ExplorationConfig explorationConfig, bool requiresSpecificExtract)
     {
-        var exitTimesMin = requiresSpecificExtract
-            ? explorationConfigConfig.MinimumExtractsWithSpecificExit
-            : explorationConfigConfig.MinimumExtracts;
+        var exitTimesMin = requiresSpecificExtract ? explorationConfig.MinimumExtractsWithSpecificExit : explorationConfig.MinimumExtracts;
 
         // Different max extract count when specific extract needed
         var exitTimesMax = requiresSpecificExtract
-            ? explorationConfigConfig.MaximumExtractsWithSpecificExit + 1
-            : explorationConfigConfig.MaximumExtracts + 1;
+            ? explorationConfig.MaximumExtractsWithSpecificExit + 1
+            : explorationConfig.MaximumExtracts + 1;
 
         return randomUtil.RandInt(exitTimesMin, exitTimesMax);
     }
