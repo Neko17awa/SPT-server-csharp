@@ -108,10 +108,10 @@ public class CompletionQuestGenerator(
     /// <summary>
     /// Generate a pool of item tpls the player should reasonably be able to retrieve
     /// </summary>
-    /// <param name="completionConfigConfig">Completion quest type config</param>
+    /// <param name="completionConfig">Completion quest type config</param>
     /// <param name="itemTplBlacklist">Item tpls to not add to pool</param>
     /// <returns>Set of item tpls</returns>
-    protected HashSet<MongoId> GetItemsToRetrievePool(CompletionConfig completionConfigConfig, HashSet<MongoId> itemTplBlacklist)
+    protected HashSet<MongoId> GetItemsToRetrievePool(CompletionConfig completionConfig, HashSet<MongoId> itemTplBlacklist)
     {
         // Get seasonal items that should not be added to pool as seasonal event is not active
         var seasonalItems = seasonalEventService.GetInactiveSeasonalEventItems();
@@ -137,7 +137,7 @@ public class CompletionQuestGenerator(
                 return repeatableQuestRewardGenerator.IsValidRewardItem(
                     itemTemplate.Id,
                     itemTplBlacklist,
-                    completionConfigConfig.RequiredItemTypeBlacklist
+                    completionConfig.RequiredItemTypeBlacklist
                 );
             })
             .Select(item => item.Id)
@@ -239,21 +239,21 @@ public class CompletionQuestGenerator(
     ///     Generate the available for finish conditions for this quest
     /// </summary>
     /// <param name="quest">Quest to add the conditions to</param>
-    /// <param name="completionConfigConfig">Completion config</param>
+    /// <param name="completionConfig">Completion config</param>
     /// <param name="repeatableConfig">Repeatable config</param>
     /// <param name="itemSelection">Filtered item selection</param>
     /// <param name="roublesBudget">Budget in roubles</param>
     /// <returns>Chosen item template Ids</returns>
     protected List<MongoId> GenerateAvailableForFinish(
         RepeatableQuest quest,
-        CompletionConfig completionConfigConfig,
+        CompletionConfig completionConfig,
         RepeatableQuestConfig repeatableConfig,
         List<MongoId> itemSelection,
         double roublesBudget
     )
     {
         // Store the indexes of items we are asking player to supply
-        var distinctItemsToRetrieveCount = randomUtil.GetInt(1, completionConfigConfig.UniqueItemCount);
+        var distinctItemsToRetrieveCount = randomUtil.GetInt(1, completionConfig.UniqueItemCount);
         var chosenRequirementItemsTpls = new List<MongoId>();
         var usedItemIndexes = new HashSet<int>();
 
@@ -289,8 +289,8 @@ public class CompletionQuestGenerator(
 
             var tplChosen = itemSelection[chosenItemIndex];
             var itemPrice = itemHelper.GetItemPrice(tplChosen).Value;
-            var minValue = completionConfigConfig.MinimumRequestedAmount;
-            var maxValue = completionConfigConfig.MaximumRequestedAmount;
+            var minValue = completionConfig.MinimumRequestedAmount;
+            var maxValue = completionConfig.MaximumRequestedAmount;
 
             var value = minValue;
 
@@ -339,14 +339,14 @@ public class CompletionQuestGenerator(
     /// </summary>
     /// <param name="itemTpl">Id of the item to request</param>
     /// <param name="value">Amount of items of this specific type to request</param>
-    /// <param name="completionConfigConfig">Completion config from quest.json</param>
+    /// <param name="completionConfig">Completion config from quest.json</param>
     /// <returns>object of "Completion"-condition</returns>
-    protected QuestCondition GenerateCondition(MongoId itemTpl, double value, CompletionConfig completionConfigConfig)
+    protected QuestCondition GenerateCondition(MongoId itemTpl, double value, CompletionConfig completionConfig)
     {
-        var onlyFoundInRaid = completionConfigConfig.RequiredItemsAreFiR;
+        var onlyFoundInRaid = completionConfig.RequiredItemsAreFiR;
         var minDurability = itemHelper.IsOfBaseclasses(itemTpl, [BaseClasses.WEAPON, BaseClasses.ARMOR])
             ? randomUtil.GetArrayValue(
-                [completionConfigConfig.RequiredItemMinDurabilityMinMax.Min, completionConfigConfig.RequiredItemMinDurabilityMinMax.Max]
+                [completionConfig.RequiredItemMinDurabilityMinMax.Min, completionConfig.RequiredItemMinDurabilityMinMax.Max]
             )
             : 0;
 
