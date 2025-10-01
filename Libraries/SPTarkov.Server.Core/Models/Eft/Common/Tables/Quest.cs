@@ -329,7 +329,7 @@ public record QuestConditionCounter
 public record QuestConditionCounterCondition
 {
     [JsonPropertyName("id")]
-    public string? Id { get; set; }
+    public MongoId? Id { get; set; }
 
     [JsonPropertyName("dynamicLocale")]
     public bool? DynamicLocale { get; set; }
