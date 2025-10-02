@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Authentication;
 using System.Text;
@@ -20,6 +21,7 @@ using SPTarkov.Server.Core.Utils.Logger;
 using SPTarkov.Server.Logger;
 using SPTarkov.Server.Modding;
 using SPTarkov.Server.Services;
+using SPTarkov.Server.Web;
 
 namespace SPTarkov.Server;
 
@@ -41,7 +43,7 @@ public static class Program
         ProgramStatics.Initialize();
 
         // Create web builder and logger
-        var builder = CreateNewHostBuilder(args);
+        var builder = CreateNewHostBuilder();
 
         var diHandler = new DependencyInjectionHandler(builder.Services);
         // register SPT components
@@ -63,6 +65,8 @@ public static class Program
             diHandler.AddInjectableTypesFromAssemblies(validatedLoadedMods.SelectMany(a => a.Assemblies));
         }
         diHandler.InjectAll();
+
+        builder.InitializeSptBlazor(loadedMods);
 
         builder.Services.AddSingleton(builder);
         builder.Services.AddSingleton<IReadOnlyList<SptMod>>(loadedMods);
@@ -125,6 +129,8 @@ public static class Program
                 await context.RequestServices.GetRequiredService<HttpServer>().HandleRequest(context, next);
             }
         );
+
+        app.UseSptBlazor();
     }
 
     private static void ConfigureKestrel(WebApplicationBuilder builder)
@@ -167,9 +173,9 @@ public static class Program
         );
     }
 
-    private static WebApplicationBuilder CreateNewHostBuilder(string[]? args = null)
+    private static WebApplicationBuilder CreateNewHostBuilder()
     {
-        var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(new WebApplicationOptions { WebRootPath = "./SPT_Data/wwwroot" });
         builder.Logging.ClearProviders();
         builder.Configuration.SetBasePath(Directory.GetCurrentDirectory());
         builder.Host.UseSptLogger();
