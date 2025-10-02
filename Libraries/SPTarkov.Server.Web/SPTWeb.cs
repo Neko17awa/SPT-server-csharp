@@ -30,14 +30,8 @@ public static class SPTWeb
         var logger = app.Services.GetRequiredService<ILogger<App>>();
 
         app.UseAntiforgery();
-
-#if DEBUG
-        //MS currently has a bug where streaming video doesn't work properly in debug, unless you use this
-        //Issue: https://github.com/dotnet/aspnetcore/issues/63320
         app.UseStaticFiles();
-#else
-        app.MapStaticAssets();
-#endif
+
         var razorBuilder = app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
         foreach (var mod in SptWebMods)
