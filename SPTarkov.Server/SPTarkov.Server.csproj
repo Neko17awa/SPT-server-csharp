@@ -17,7 +17,7 @@
     <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
     <!-- Has to be enabled for SPTarkov.Server.Web to function properly-->
     <StaticWebAssetsEnabled>true</StaticWebAssetsEnabled>
-    <StaticWebAssetBasePath>../SPT_Data/wwwroot/</StaticWebAssetBasePath>
+    <StaticWebAssetBasePath>..\SPT_Data\wwwroot\</StaticWebAssetBasePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
     <ApplicationIcon>..\Libraries\SPTarkov.Server.Assets\SPT_Data\images\icon.ico</ApplicationIcon>
