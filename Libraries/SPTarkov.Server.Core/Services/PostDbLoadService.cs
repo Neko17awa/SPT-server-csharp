@@ -6,6 +6,7 @@ using SPTarkov.Server.Core.Models.Enums;
 using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Servers;
+using SPTarkov.Server.Core.Utils;
 using SPTarkov.Server.Core.Utils.Cloners;
 
 namespace SPTarkov.Server.Core.Services;
@@ -21,6 +22,7 @@ public class PostDbLoadService(
     ItemBaseClassService itemBaseClassService,
     RaidWeatherService raidWeatherService,
     ConfigServer configServer,
+    RandomUtil randomUtil,
     ICloner cloner
 )
 {
@@ -41,6 +43,8 @@ public class PostDbLoadService(
         // Mods that add items and use the baseClass service generate the cache including their items, the next mod that
         // add items gets left out,causing warnings
         itemBaseClassService.HydrateItemBaseClassCache();
+
+        ReduceStaticItemWeight();
 
         AddCustomLooseLootPositions();
 
@@ -321,30 +325,30 @@ public class PostDbLoadService(
     protected void AddCustomLooseLootPositions()
     {
         var looseLootPositionsToAdd = LootConfig.LooseLoot;
-        foreach (var (mapId, positionsToAdd) in looseLootPositionsToAdd)
+        foreach (var (locationId, positionsToAdd) in looseLootPositionsToAdd)
         {
-            if (mapId is null)
+            if (locationId is null)
             {
-                logger.Warning(serverLocalisationService.GetText("location-unable_to_add_custom_loot_position", mapId));
+                logger.Warning(serverLocalisationService.GetText("location-unable_to_add_custom_loot_position", locationId));
 
                 continue;
             }
 
             databaseService
-                .GetLocation(mapId)
-                .LooseLoot.AddTransformer(looselootData =>
+                .GetLocation(locationId)
+                .LooseLoot.AddTransformer(looseLootData =>
                 {
-                    if (looselootData is null)
+                    if (looseLootData is null)
                     {
-                        logger.Warning(serverLocalisationService.GetText("location-map_has_no_loose_loot_data", mapId));
+                        logger.Warning(serverLocalisationService.GetText("location-map_has_no_loose_loot_data", locationId));
 
-                        return looselootData;
+                        return looseLootData;
                     }
 
                     foreach (var positionToAdd in positionsToAdd)
                     {
                         // Exists already, add new items to existing positions pool
-                        var existingLootPosition = looselootData.Spawnpoints.FirstOrDefault(x =>
+                        var existingLootPosition = looseLootData.Spawnpoints.FirstOrDefault(x =>
                             x.Template.Id == positionToAdd.Template.Id
                         );
 
@@ -360,10 +364,44 @@ public class PostDbLoadService(
                         }
 
                         // New position, add entire object
-                        looselootData.Spawnpoints = looselootData.Spawnpoints.Append(positionToAdd);
+                        looseLootData.Spawnpoints = looseLootData.Spawnpoints.Append(positionToAdd);
                     }
 
-                    return looselootData;
+                    return looseLootData;
+                });
+        }
+    }
+
+    protected void ReduceStaticItemWeight()
+    {
+        foreach (var (locationId, itemTplWeightDict) in LootConfig.StaticItemWeightReduction)
+        {
+            databaseService
+                .GetLocation(locationId)
+                .StaticLoot.AddTransformer(staticLootData =>
+                {
+                    if (staticLootData is null)
+                    {
+                        return staticLootData;
+                    }
+
+                    foreach (var (itemTpl, percentAdjustment) in itemTplWeightDict)
+                    {
+                        foreach (var loot in staticLootData)
+                        {
+                            var itemsWithTpl = loot.Value.ItemDistribution.Where(item => item.Tpl == itemTpl);
+                            foreach (var itemToAdjust in itemsWithTpl)
+                            {
+                                itemToAdjust.RelativeProbability = randomUtil.GetPercentOfValue(
+                                    percentAdjustment,
+                                    itemToAdjust.RelativeProbability.Value,
+                                    0
+                                );
+                            }
+                        }
+                    }
+
+                    return staticLootData;
                 });
         }
     }

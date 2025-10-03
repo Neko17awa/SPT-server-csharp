@@ -8,5 +8,10 @@
     "bigmap": {},
     "rezervbase": {},
     "tarkovstreets": {}
+  },
+  "staticItemWeightReduction":{
+	  "bigmap":{
+		  "5ad5d49886f77455f9731921": 60
+	  }
   }
 }
