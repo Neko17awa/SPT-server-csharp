@@ -63,7 +63,7 @@ public abstract class AbstractPatch
             && _ilManipulatorList.Count == 0
         )
         {
-            throw new PatchException($"{HarmonyId}: At least one of the patch methods must be specified");
+            throw new PatchException($"{GetType().Name}: At least one of the patch methods must be specified");
         }
     }
 
@@ -109,7 +109,7 @@ public abstract class AbstractPatch
 
         if (TargetMethod == null)
         {
-            throw new PatchException($"{HarmonyId}: TargetMethod is null");
+            throw new PatchException($"{GetType().Name}: TargetMethod is null");
         }
 
         try
@@ -146,7 +146,7 @@ public abstract class AbstractPatch
         }
         catch (Exception ex)
         {
-            throw new Exception($"{HarmonyId}:", ex);
+            throw new Exception($"{GetType().Name}:", ex);
         }
     }
 
@@ -181,7 +181,7 @@ public abstract class AbstractPatch
 
         if (target == null)
         {
-            throw new PatchException($"{HarmonyId}: TargetMethod is null");
+            throw new PatchException($"{GetType().Name}: TargetMethod is null");
         }
 
         try
@@ -191,12 +191,12 @@ public abstract class AbstractPatch
         }
         catch (Exception ex)
         {
-            throw new PatchException($"{HarmonyId}:", ex);
+            throw new PatchException($"{GetType().Name}:", ex);
         }
 
         if (!ModPatchCache.RemovePatch(this))
         {
-            throw new PatchException($"{HarmonyId}: Target patch not present in cache, a mod is likely externally altering it.");
+            throw new PatchException($"{GetType().Name}: Target patch not present in cache, a mod is likely externally altering it.");
         }
 
         IsActive = false;
