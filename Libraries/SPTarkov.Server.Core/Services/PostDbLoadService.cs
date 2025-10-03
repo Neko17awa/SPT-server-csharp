@@ -374,7 +374,7 @@ public class PostDbLoadService(
 
     protected void ReduceStaticItemWeight()
     {
-        foreach (var (locationId, itemTplWeightDict) in LootConfig.StaticItemWeightReduction)
+        foreach (var (locationId, itemTplWeightDict) in LootConfig.StaticItemWeightAdjustment)
         {
             databaseService
                 .GetLocation(locationId)

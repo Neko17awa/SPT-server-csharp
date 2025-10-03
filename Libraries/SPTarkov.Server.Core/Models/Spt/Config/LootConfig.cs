@@ -22,9 +22,9 @@ public record LootConfig : BaseConfig
     public required Dictionary<string, Dictionary<string, double>> LooseLootSpawnPointAdjustments { get; set; }
 
     /// <summary>
-    ///     Reduce weighting of static items per location
+    ///     Adjust weighting of static items per location
     ///     // value = percentage of original weight to use
     /// </summary>
-    [JsonPropertyName("staticItemWeightReduction")]
-    public required Dictionary<string, Dictionary<MongoId, double>> StaticItemWeightReduction { get; set; }
+    [JsonPropertyName("staticItemWeightAdjustment")]
+    public required Dictionary<string, Dictionary<MongoId, double>> StaticItemWeightAdjustment { get; set; }
 }
