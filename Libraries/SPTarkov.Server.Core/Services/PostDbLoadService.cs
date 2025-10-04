@@ -54,7 +54,7 @@ public class PostDbLoadService(
 
         if (CoreConfig.Fixes.FixShotgunDispersion)
         {
-            FixShotgunDispersions();
+            FixShotgunDispersions(CoreConfig.Fixes.ShotgunIdsToFix);
         }
 
         if (LocationConfig.AddOpenZonesToAllMaps)
@@ -407,18 +407,11 @@ public class PostDbLoadService(
     }
 
     // BSG have two values for shotgun dispersion, we make sure both have the same value
-    protected void FixShotgunDispersions()
+    protected void FixShotgunDispersions(IEnumerable<MongoId> shotgunIds)
     {
         var itemDb = databaseService.GetItems();
 
-        var shotguns = new List<MongoId>
-        {
-            Weapons.SHOTGUN_12G_SAIGA_12K,
-            Weapons.SHOTGUN_20G_TOZ_106,
-            Weapons.SHOTGUN_12G_M870,
-            Weapons.SHOTGUN_12G_SAIGA_12K_FA,
-        };
-        foreach (var shotgunId in shotguns)
+        foreach (var shotgunId in shotgunIds)
         {
             if (itemDb.TryGetValue(shotgunId, out var shotgun) && shotgun.Properties.ShotgunDispersion.HasValue)
             {

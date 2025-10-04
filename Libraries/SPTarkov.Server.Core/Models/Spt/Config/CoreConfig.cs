@@ -180,6 +180,9 @@ public record GameFixes
     [JsonPropertyName("fixShotgunDispersion")]
     public bool FixShotgunDispersion { get; set; }
 
+    [JsonPropertyName("shotgunIdsToFix")]
+    public IEnumerable<MongoId> ShotgunIdsToFix { get; set; }
+
     /// <summary>
     ///     Remove items added by mods when the mod no longer exists - can fix dead profiles stuck at game load
     /// </summary>
