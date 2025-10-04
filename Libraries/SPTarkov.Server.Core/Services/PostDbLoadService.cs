@@ -93,7 +93,7 @@ public class PostDbLoadService(
         AdjustHideoutCraftTimes(HideoutConfig.OverrideCraftTimeSeconds);
         AdjustHideoutBuildTimes(HideoutConfig.OverrideBuildTimeSeconds);
 
-        UnlockHideoutLootCrateCrafts();
+        UnlockHideoutLootCrateCrafts(HideoutConfig.HideoutLootCrateCraftIdsToUnlockInHideout);
 
         CloneExistingCraftsAndAddNew();
 
@@ -617,16 +617,9 @@ public class PostDbLoadService(
         }
     }
 
-    protected void UnlockHideoutLootCrateCrafts()
+    protected void UnlockHideoutLootCrateCrafts(IEnumerable<MongoId> craftIdsToUnlock)
     {
-        var hideoutLootBoxCraftIds = new List<string>
-        {
-            "66582be04de4820934746cea",
-            "6745925da9c9adf0450d5bca",
-            "67449c79268737ef6908d636",
-        };
-
-        foreach (var craftId in hideoutLootBoxCraftIds)
+        foreach (var craftId in craftIdsToUnlock)
         {
             var recipe = databaseService.GetHideout().Production.Recipes.FirstOrDefault(craft => craft.Id == craftId);
             if (recipe is not null)
