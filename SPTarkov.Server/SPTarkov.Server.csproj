@@ -55,7 +55,7 @@
   
   <Target Name="MoveDllsToLibsFolder" AfterTargets="Publish">
     <ItemGroup>
-      <PublishedDlls Include="$(PublishDir)*.dll" />
+      <PublishedDlls Include="$(PublishDir)*.dll" Exclude="$(PublishDir)$(AssemblyName).dll" />
     </ItemGroup>
 
     <MakeDir Directories="$(PublishDir)SPT_Data\libs" />
