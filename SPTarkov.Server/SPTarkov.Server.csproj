@@ -52,15 +52,11 @@
   <ItemGroup>
     <None Include="..\LICENSE" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
-  
   <Target Name="MoveDllsToLibsFolder" AfterTargets="Publish">
     <ItemGroup>
       <PublishedDlls Include="$(PublishDir)*.dll" />
     </ItemGroup>
-
     <MakeDir Directories="$(PublishDir)SPT_Data\libs" />
-
     <Move SourceFiles="@(PublishedDlls)" DestinationFolder="$(PublishDir)SPT_Data\libs\" />
   </Target>
-  
 </Project>
