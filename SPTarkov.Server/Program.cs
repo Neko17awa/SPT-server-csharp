@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Authentication;
 using System.Text;
@@ -119,7 +118,6 @@ public static class Program
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
             serverExceptionLogger.LogCritical(ex, "Critical exception, stopping server...");
             throw;
         }
