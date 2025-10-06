@@ -29,6 +29,23 @@ public static class Program
 {
     public static async Task Main(string[] args)
     {
+        try
+        {
+            await StartServer(args);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("=========================================================================================================");
+            Console.WriteLine("The server has unexpectedly stopped, please check your log files and reach out to #spt-support in discord");
+            Console.WriteLine(e);
+            Console.WriteLine("=========================================================================================================");
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadLine();
+        }
+    }
+
+    public static async Task StartServer(string[] args)
+    {
         Console.OutputEncoding = Encoding.UTF8;
 
         // Some users don't know how to create a shortcut...
@@ -104,6 +121,7 @@ public static class Program
         {
             Console.WriteLine(ex);
             serverExceptionLogger.LogCritical(ex, "Critical exception, stopping server...");
+            throw;
         }
         finally
         {
