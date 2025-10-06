@@ -1,6 +1,6 @@
 ﻿using SPTarkov.Server.Core.Helpers;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
-using SPTarkov.Server.Core.Models.Enums;
+using SPTarkov.Server.Core.Models.Enums.Hideout;
 
 namespace SPTarkov.Server.Core.Extensions;
 
@@ -40,5 +40,18 @@ public static class ProductionExtensions
             default:
                 return false;
         }
+    }
+
+    /// <summary>
+    /// Craft has completed, update its properties to reflect its new state
+    /// </summary>
+    /// <param name="production">Craft to update</param>
+    public static void FlagCultistCircleCraftAsComplete(this Production production)
+    {
+        production.AvailableForFinish = true;
+
+        // The client expects `Progress` to be 0, and `inProgress` to be false when a circle is complete
+        production.Progress = 0;
+        production.InProgress = false;
     }
 }

@@ -658,6 +658,7 @@
   "repeatable-unable_to_accept_quest_see_log": "Nie można zaakceptować zadania, sprawdź logi serwera w celu uzyskania szczegółów",
   "repeatable-unable_to_accept_quest_starting_message_not_found": "Nie można zaakceptować zadania: {{questId}}, nie można znaleźć tekstu wiadomości rozpoczynającej zadanie o id: {{messageId}}",
   "repeatable-quest_generation_failed_no_template": "Generowanie: %s zadania nie powiodło się, brak dostępnego szablonu dla zadania",
+  "repeatable-available_for_finish_condition_failed_to_generate": "Generowanie warunku możliwości ukończenia nie powiodło się dla lokalizacji: %s",
   "repeatable-unable_to_find_location_id_for_location_name": "Nie można znaleźć locationId dla: %s",
   "reward-type_not_handled": "Typ nagrody: {{rewardType}} nie jest obsługiwany dla zadania/osiągnięcia: {{questId}}",
   "reward-unable_to_find_matching_hideout_production": "Nie można znaleźć pasującego odblokowania receptury w kryjówce za zadanie/osiągnięcie: {{questId}}, znalezione dopasowania: {{matchCount}}",

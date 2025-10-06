@@ -3,7 +3,6 @@ using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Services;
 using SPTarkov.Server.Core.Utils;
-using LogLevel = SPTarkov.Server.Core.Models.Spt.Logging.LogLevel;
 
 namespace SPTarkov.Server.Modding;
 
@@ -24,10 +23,10 @@ public class ModValidator(ISptLogger<ModValidator> logger, ServerLocalisationSer
         // Validate and remove broken mods from mod list
         var validMods = GetValidMods(mods).ToList(); // ToList now so we can .Sort later
 
+        CheckForDuplicateMods(validMods);
+
         // Key to guid for easy comparision later
         var modPackageData = validMods.ToDictionary(m => m.ModMetadata.ModGuid, m => m.ModMetadata);
-
-        CheckForDuplicateMods(modPackageData);
 
         // Used to check all errors before stopping the load execution
         var errorsFound = false;
@@ -83,20 +82,20 @@ public class ModValidator(ISptLogger<ModValidator> logger, ServerLocalisationSer
     /// <summary>
     ///     Check for duplicate mods loaded, show error if any
     /// </summary>
-    /// <param name="modPackageData">Dictionary of mod package.json data</param>
-    protected void CheckForDuplicateMods(Dictionary<string, AbstractModMetadata> modPackageData)
+    /// <param name="validMods">List of validated mods to check for duplicates</param>
+    protected void CheckForDuplicateMods(List<SptMod> validMods)
     {
         var groupedMods = new Dictionary<string, List<AbstractModMetadata>>();
 
-        foreach (var mod in modPackageData.Values)
+        foreach (var mod in validMods.Select(mod => mod.ModMetadata).ToArray())
         {
-            var name = $"{mod.Author}-{mod.Name}";
-            groupedMods.Add(name, [.. groupedMods.GetValueOrDefault(name) ?? [], mod]);
+            groupedMods[mod.ModGuid] = [.. groupedMods.GetValueOrDefault(mod.ModGuid) ?? [], mod];
 
-            // if there's more than one entry for a given mod it means there's at least 2 mods with the same author and name trying to load.
-            if (groupedMods[name].Count > 1)
+            // if there's more than one entry for a given mod it means there's at least 2 mods with the same GUID trying to load.
+            if (groupedMods[mod.ModGuid].Count > 1)
             {
-                SkippedMods.Add(name);
+                SkippedMods.Add(mod.ModGuid);
+                validMods.RemoveAll(modInner => modInner.ModMetadata.ModGuid == mod.ModGuid);
             }
         }
 
@@ -156,12 +155,11 @@ public class ModValidator(ISptLogger<ModValidator> logger, ServerLocalisationSer
     }
 
     /// <summary>
-    ///     Compile mod and add into class property "imported"
+    ///     Add into class property "Imported"
     /// </summary>
-    /// <param name="mod">Name of mod to compile/add</param>
+    /// <param name="mod">Mod details</param>
     protected void AddMod(SptMod mod)
     {
-        // Add mod to imported list
         Imported.Add(mod.ModMetadata.ModGuid, mod);
         logger.Info(
             localisationService.GetText(
@@ -169,7 +167,7 @@ public class ModValidator(ISptLogger<ModValidator> logger, ServerLocalisationSer
                 new
                 {
                     name = mod.ModMetadata.Name,
-                    version = mod.ModMetadata.Version,
+                    version = $"{mod.ModMetadata.Version} {mod.ModMetadata.SptVersion}",
                     author = mod.ModMetadata.Author,
                 }
             )

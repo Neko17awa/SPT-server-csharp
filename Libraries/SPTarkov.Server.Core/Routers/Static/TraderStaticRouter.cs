@@ -15,9 +15,5 @@ public class TraderStaticRouter(JsonUtil jsonUtil, TraderCallbacks traderCallbac
                 "/client/trading/api/traderSettings",
                 async (url, info, sessionID, output) => await traderCallbacks.GetTraderSettings(url, info, sessionID)
             ),
-            new RouteAction<EmptyRequestData>(
-                "/singleplayer/moddedTraders",
-                async (url, info, sessionID, output) => await traderCallbacks.GetModdedTraderData(url, info, sessionID)
-            ),
         ]
     ) { }

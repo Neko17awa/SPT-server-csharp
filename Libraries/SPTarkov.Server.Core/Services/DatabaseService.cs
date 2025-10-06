@@ -1,7 +1,5 @@
-using System.Diagnostics;
 using SPTarkov.Common.Extensions;
 using SPTarkov.DI.Annotations;
-using SPTarkov.Server.Core.Extensions;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
@@ -12,7 +10,6 @@ using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Servers;
 using Hideout = SPTarkov.Server.Core.Models.Spt.Hideout.Hideout;
 using Locations = SPTarkov.Server.Core.Models.Spt.Server.Locations;
-using LogLevel = SPTarkov.Server.Core.Models.Spt.Logging.LogLevel;
 
 namespace SPTarkov.Server.Core.Services;
 
@@ -26,8 +23,6 @@ public class DatabaseService(
     ServerLocalisationService serverLocalisationService
 )
 {
-    private bool _isDataValid = true;
-
     /// <returns> assets/database/ </returns>
     public DatabaseTables GetTables()
     {
@@ -167,12 +162,7 @@ public class DatabaseService(
     /// <returns> assets/database/traders/ </returns>
     public Trader? GetTrader(MongoId traderId)
     {
-        if (!databaseServer.GetTables().Traders.TryGetValue(traderId, out var desiredTrader))
-        {
-            return null;
-        }
-
-        return desiredTrader;
+        return databaseServer.GetTables().Traders.GetValueOrDefault(traderId);
     }
 
     /// <returns> assets/database/locationServices/ </returns>
@@ -186,73 +176,5 @@ public class DatabaseService(
         }
 
         return databaseServer.GetTables().Templates?.LocationServices!;
-    }
-
-    /// <summary>
-    ///     Validates that the database doesn't contain invalid ID data
-    /// </summary>
-    public void ValidateDatabase()
-    {
-        var start = Stopwatch.StartNew();
-
-        _isDataValid =
-            ValidateTable(GetQuests(), "quest")
-            && ValidateTable(GetTraders(), "trader")
-            && ValidateTable(GetItems(), "item")
-            && ValidateTable(GetCustomization(), "customization");
-
-        if (!_isDataValid)
-        {
-            logger.Error(serverLocalisationService.GetText("database-invalid_data"));
-        }
-
-        start.Stop();
-        if (logger.IsLogEnabled(LogLevel.Debug))
-        {
-            logger.Debug($"ID validation took: {start.ElapsedMilliseconds}ms");
-        }
-    }
-
-    /// <summary>
-    ///     Validate that the given table only contains valid MongoIDs
-    /// </summary>
-    /// <param name="table"> Table to validate for MongoIDs</param>
-    /// <param name="tableType"> The type of table, used in output message </param>
-    /// <returns> True if the table only contains valid data </returns>
-    private bool ValidateTable<T>(Dictionary<string, T> table, string tableType)
-    {
-        foreach (var keyValuePair in table)
-        {
-            if (!keyValuePair.Key.IsValidMongoId())
-            {
-                logger.Error($"Invalid {tableType} ID: '{keyValuePair.Key}'");
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private bool ValidateTable<T>(Dictionary<MongoId, T> table, string tableType)
-    {
-        foreach (var keyValuePair in table)
-        {
-            if (!keyValuePair.Key.IsValidMongoId())
-            {
-                logger.Error($"Invalid {tableType} ID: '{keyValuePair.Key}'");
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /// <summary>
-    ///     Check if the database is valid
-    /// </summary>
-    /// <returns> True if the database contains valid data, false otherwise </returns>
-    public bool IsDatabaseValid()
-    {
-        return _isDataValid;
     }
 }

@@ -491,7 +491,8 @@
   },
   "lootableItemBlacklist": [
     "660bbc47c38b837877075e47",
-    "660bc341c38b837877075e4c"
+    "660bc341c38b837877075e4c",
+    "6866665cdf54e1190902df55"
   ],
   "rewardItemBlacklist": [
     "58ac60eb86f77401897560ff",
@@ -582,7 +583,8 @@
     "684180bc51bf8645f7067bc8",
     "68418091b5b0c9e4c60f0e7a",
     "684180ee9b6d80d840042e8a",
-    "684181208d035f60230f63f9"
+    "684181208d035f60230f63f9",
+    "6866665cdf54e1190902df55"
   ],
   "rewardItemTypeBlacklist": [
     "65649eb40bf0ed77b8044453"

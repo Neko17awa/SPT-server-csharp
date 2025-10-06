@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Constants;
@@ -64,7 +63,7 @@ public class BotController(
     ///     Get the core.json difficulty settings from database/bots
     /// </summary>
     /// <returns></returns>
-    public Dictionary<string, JsonElement> GetBotCoreDifficulty()
+    public CoreBot GetBotCoreDifficulty()
     {
         return databaseService.GetBots().Core;
     }
@@ -136,7 +135,7 @@ public class BotController(
                 continue;
             }
 
-            if (botDetails?.BotDifficulty is null)
+            if (botDetails?.BotDifficulty is null || !botDetails.BotDifficulty.Any())
             {
                 // Bot has no difficulty values, skip
                 logger.Warning($"Unable to find bot: {botTypeLower} difficulty values in db, skipping");

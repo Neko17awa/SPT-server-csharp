@@ -1,4 +1,5 @@
 using SPTarkov.DI.Annotations;
+using SPTarkov.Server.Core.Extensions;
 using SPTarkov.Server.Core.Helpers;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common;
@@ -24,6 +25,7 @@ public class RagfairPriceService(
     PresetHelper presetHelper,
     ItemHelper itemHelper,
     DatabaseService databaseService,
+    DatabaseServer databaseServer,
     ServerLocalisationService serverLocalisationService,
     ConfigServer configServer
 )
@@ -37,7 +39,10 @@ public class RagfairPriceService(
     public void Load()
     {
         RefreshStaticPrices();
-        RefreshDynamicPrices();
+        if (RagfairConfig.Dynamic.GenerateBaseFleaPrices.UseHandbookPrice)
+        {
+            ReplaceFleaBasePrices();
+        }
     }
 
     public string GetRoute()
@@ -62,11 +67,102 @@ public class RagfairPriceService(
     }
 
     /// <summary>
-    ///     Copy the prices.json data into our dynamic price dictionary
+    /// Replace base item price used for flea
+    /// Use handbook as a base price
     /// </summary>
-    public void RefreshDynamicPrices()
+    public void ReplaceFleaBasePrices()
     {
-        // TODO: remove as redundant?
+        var config = RagfairConfig.Dynamic.GenerateBaseFleaPrices;
+        var pricePool = databaseServer.GetTables().Templates.Prices;
+        var hideoutCraftItems = GetHideoutCraftItemTpls();
+
+        foreach (var (itemTpl, handbookPrice) in StaticPrices)
+        {
+            // Get new price to use
+            var newBasePrice =
+                handbookPrice
+                * (GetFleaBasePriceMultiplier(itemTpl, config) + GetHideoutCraftMultiplier(itemTpl, config, hideoutCraftItems));
+            if (newBasePrice == 0)
+            {
+                continue;
+            }
+
+            if (config.PreventPriceBeingBelowTraderBuyPrice)
+            {
+                // Check if item can be sold to trader for a higher price than what we're going to set
+                var highestSellToTraderPrice = traderHelper.GetHighestSellToTraderPrice(itemTpl);
+                if (highestSellToTraderPrice > newBasePrice)
+                {
+                    // Trader has higher sell price, use that value
+                    newBasePrice = highestSellToTraderPrice;
+                }
+            }
+
+            pricePool.AddOrUpdate(itemTpl, newBasePrice);
+        }
+    }
+
+    /// <summary>
+    /// Get the multiplier to apply to items used in hideout crafts
+    /// If not hideout craft item, return 0
+    /// </summary>
+    /// <param name="itemTpl">Item to get multiplier for</param>
+    /// <param name="config">Ragfair config</param>
+    /// <param name="hideoutCraftItems">Craft item tpls</param>
+    /// <returns>Multiplier</returns>
+    protected double GetHideoutCraftMultiplier(MongoId itemTpl, GenerateFleaPrices config, HashSet<MongoId?> hideoutCraftItems)
+    {
+        if (!config.UseHideoutCraftMultiplier || !hideoutCraftItems.Contains(itemTpl))
+        {
+            return 0;
+        }
+
+        return config.HideoutCraftMultiplier;
+    }
+
+    /// <summary>
+    /// Get a set of item tpls used by hideout crafts as requirements
+    /// </summary>
+    /// <returns>Set</returns>
+    protected HashSet<MongoId?> GetHideoutCraftItemTpls()
+    {
+        var results = new HashSet<MongoId?>();
+        foreach (
+            var itemRequirements in databaseService
+                .GetHideout()
+                .Production.Recipes.Select(recipe => recipe.Requirements.Where(x => x.Type == "Item").Select(x => x.TemplateId))
+        )
+        {
+            results.UnionWith(itemRequirements);
+        }
+
+        return results;
+    }
+
+    /// <summary>
+    /// Get the multiplier to apply to a handbook price to create the base flea price of an item
+    /// </summary>
+    /// <param name="itemTpl">Item to look up multiplier of</param>
+    /// <param name="config"></param>
+    /// <returns>Multiplier value</returns>
+    protected double GetFleaBasePriceMultiplier(MongoId itemTpl, GenerateFleaPrices config)
+    {
+        // Specific item multiplier may exist, check for it
+        if (RagfairConfig.Dynamic.GenerateBaseFleaPrices.ItemTplMultiplierOverride.TryGetValue(itemTpl, out var specificItemMultiplier))
+        {
+            return specificItemMultiplier;
+        }
+
+        // Check if tpl is of each time, if it is, use that multi
+        foreach (var (itemType, multiplier) in RagfairConfig.Dynamic.GenerateBaseFleaPrices.ItemTypeMultiplierOverride)
+        {
+            if (itemHelper.IsOfBaseclass(itemTpl, itemType))
+            {
+                return multiplier;
+            }
+        }
+
+        return RagfairConfig.Dynamic.GenerateBaseFleaPrices.PriceMultiplier;
     }
 
     /// <summary>

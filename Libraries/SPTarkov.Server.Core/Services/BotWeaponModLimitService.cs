@@ -140,8 +140,8 @@ public class BotWeaponModLimitService(ISptLogger<BotWeaponModLimitService> logge
     /// <returns>true if limit reached</returns>
     protected bool WeaponModLimitReached(MongoId modTpl, ItemCount currentCount, int? maxLimit, string botRole)
     {
-        // No value or 0
-        if (maxLimit is null || maxLimit is 0)
+        // No limit
+        if (maxLimit is null or 0)
         {
             return false;
         }

@@ -44,6 +44,9 @@ public record HideoutConfig : BaseConfig
 
     [JsonPropertyName("hideoutCraftsToAdd")]
     public required List<HideoutCraftToAdd> HideoutCraftsToAdd { get; set; }
+
+    [JsonPropertyName("hideoutLootCrateCraftIdsToUnlockInHideout")]
+    public IEnumerable<MongoId> HideoutLootCrateCraftIdsToUnlockInHideout { get; set; }
 }
 
 public record HideoutCraftToAdd

@@ -163,7 +163,8 @@
     "67449b6c89d5e1ddc603f504",
     "6740987b89d5e1ddc603f4f0",
     "6707d0bdaab679420007e01a",
-    "66d9f7e7099cf6adcc07a369"
+    "66d9f7e7099cf6adcc07a369",
+    "6866665cdf54e1190902df55"
   ],
   "useDifficultyOverride": false,
   "difficulty": "AsOnline",
@@ -318,17 +319,17 @@
         {
           "min": 36,
           "max": 45,
-          "value": 450000
+          "value": 550000
         },
         {
           "min": 46,
           "max": 64,
-          "value": 750000
+          "value": 1000000
         },
         {
           "min": 65,
           "max": 100,
-          "value": 2500000
+          "value": 3000000
         }
       ],
       "locationMultiplier": {

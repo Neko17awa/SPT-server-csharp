@@ -1,18 +1,25 @@
-﻿namespace SPTarkov.Reflection.Patching;
+﻿using JetBrains.Annotations;
+
+namespace SPTarkov.Reflection.Patching;
 
 [AttributeUsage(AttributeTargets.Method)]
+[MeansImplicitUse]
 public class PatchPrefixAttribute : Attribute { }
 
 [AttributeUsage(AttributeTargets.Method)]
+[MeansImplicitUse]
 public class PatchPostfixAttribute : Attribute { }
 
 [AttributeUsage(AttributeTargets.Method)]
+[MeansImplicitUse]
 public class PatchTranspilerAttribute : Attribute { }
 
 [AttributeUsage(AttributeTargets.Method)]
+[MeansImplicitUse]
 public class PatchFinalizerAttribute : Attribute { }
 
 [AttributeUsage(AttributeTargets.Method)]
+[MeansImplicitUse]
 public class PatchIlManipulatorAttribute : Attribute { }
 
 /// <summary>

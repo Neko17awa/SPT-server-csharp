@@ -106,7 +106,7 @@ public record BotConfig : BaseConfig
     ///     Tpls for low profile gas blocks
     /// </summary>
     [JsonPropertyName("lowProfileGasBlockTpls")]
-    public required HashSet<string> LowProfileGasBlockTpls { get; set; }
+    public required HashSet<MongoId> LowProfileGasBlockTpls { get; set; }
 
     /// <summary>
     ///     What bottypes should be excluded from having loot generated on them (backpack/pocket/vest) does not disable food/drink/special/
@@ -344,7 +344,7 @@ public record RandomisationDetails
     ///     Key = weapon tpl, value = min size of magazine allowed
     /// </summary>
     [JsonPropertyName("minimumMagazineSize")]
-    public Dictionary<string, double>? MinimumMagazineSize { get; set; }
+    public Dictionary<MongoId, double>? MinimumMagazineSize { get; set; }
 }
 
 public record NighttimeChanges

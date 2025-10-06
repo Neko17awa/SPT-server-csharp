@@ -55,16 +55,4 @@ public class TraderCallbacks(HttpResponseUtil httpResponseUtil, TraderController
         var traderID = url.Replace("/client/trading/api/getTraderAssort/", "");
         return new ValueTask<string>(httpResponseUtil.GetBody(traderController.GetAssort(sessionID, traderID)));
     }
-
-    /// <summary>
-    ///     Handle /singleplayer/moddedTraders
-    /// </summary>
-    /// <param name="url"></param>
-    /// <param name="_"></param>
-    /// <param name="sessionID">Session/player id</param>
-    /// <returns></returns>
-    public ValueTask<string> GetModdedTraderData(string url, EmptyRequestData _, MongoId sessionID)
-    {
-        return new ValueTask<string>(httpResponseUtil.NoBody(TraderConfig.ModdedTraders));
-    }
 }

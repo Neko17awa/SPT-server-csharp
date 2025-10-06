@@ -29,9 +29,6 @@ public record TraderConfig : BaseConfig
 
     [JsonPropertyName("fence")]
     public required FenceConfig Fence { get; set; }
-
-    [JsonPropertyName("moddedTraders")]
-    public required ModdedTraders ModdedTraders { get; set; }
 }
 
 public record UpdateTime

@@ -12,7 +12,7 @@ public record Globals
     public required Config Configuration { get; init; }
 
     [JsonPropertyName("LocationInfection")]
-    public required LocationInfection LocationInfection { get; init; }
+    public required Dictionary<string, int> LocationInfection { get; init; }
 
     [JsonPropertyName("bot_presets")]
     public required IEnumerable<BotPreset> BotPresets { get; init; }
@@ -83,39 +83,6 @@ public record RadioStation
 
     [JsonPropertyName("Station")]
     public RadioStationType Station { get; set; }
-}
-
-public record LocationInfection
-{
-    [JsonPropertyName("Interchange")]
-    public double Interchange { get; set; }
-
-    [JsonPropertyName("Lighthouse")]
-    public double Lighthouse { get; set; }
-
-    [JsonPropertyName("RezervBase")]
-    public double RezervBase { get; set; }
-
-    [JsonPropertyName("Sandbox")]
-    public double Sandbox { get; set; }
-
-    [JsonPropertyName("Shoreline")]
-    public double Shoreline { get; set; }
-
-    [JsonPropertyName("TarkovStreets")]
-    public double TarkovStreets { get; set; }
-
-    [JsonPropertyName("Woods")]
-    public double Woods { get; set; }
-
-    [JsonPropertyName("bigmap")]
-    public double BigMap { get; set; }
-
-    [JsonPropertyName("factory4")]
-    public double Factory4 { get; set; }
-
-    [JsonPropertyName("laboratory")]
-    public double Laboratory { get; set; }
 }
 
 public record ArtilleryShelling
@@ -4367,6 +4334,9 @@ public record BotPreset
 {
     [JsonPropertyName("UseThis")]
     public bool UseThis { get; set; }
+
+    [JsonPropertyName("VISIBILITY_CHANGE_SPEED")]
+    public float VisibilityChangeSpeed { get; set; }
 
     [JsonPropertyName("Role")]
     public string Role { get; set; }

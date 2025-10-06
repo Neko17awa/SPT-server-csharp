@@ -456,8 +456,5 @@
     "btrDeliveryExpireHours": 240,
     "playerRepMin": -7,
     "playerRepMax": 15
-  },
-  "moddedTraders": {
-    "clothingService": []
   }
 }

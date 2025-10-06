@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common;
 
 namespace SPTarkov.Server.Core.Models.Spt.Config;
@@ -19,4 +20,11 @@ public record LootConfig : BaseConfig
     /// </summary>
     [JsonPropertyName("looseLootSpawnPointAdjustments")]
     public required Dictionary<string, Dictionary<string, double>> LooseLootSpawnPointAdjustments { get; set; }
+
+    /// <summary>
+    ///     Adjust weighting of static items per location
+    ///     // value = percentage of original weight to use
+    /// </summary>
+    [JsonPropertyName("staticItemWeightAdjustment")]
+    public required Dictionary<string, Dictionary<MongoId, double>> StaticItemWeightAdjustment { get; set; }
 }

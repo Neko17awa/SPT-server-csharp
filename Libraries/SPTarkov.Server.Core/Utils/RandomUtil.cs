@@ -81,6 +81,20 @@ public class RandomUtil(ISptLogger<RandomUtil> logger, ICloner cloner)
     }
 
     /// <summary>
+    ///     Calculates the percentage of a given number and returns the result.
+    /// </summary>
+    /// <param name="percent">The percentage to calculate.</param>
+    /// <param name="number">The number to calculate the percentage of.</param>
+    /// <param name="toFixed">The number of decimal places to round the result to (default is 2).</param>
+    /// <returns>The calculated percentage of the given number, rounded to the specified number of decimal places.</returns>
+    public virtual float GetPercentOfValue(double percent, float number, int toFixed = 2)
+    {
+        var num = percent * (number / 100);
+
+        return (float)Math.Round(num, toFixed);
+    }
+
+    /// <summary>
     ///     Reduces a given number by a specified percentage.
     /// </summary>
     /// <param name="number">The original number to be reduced.</param>

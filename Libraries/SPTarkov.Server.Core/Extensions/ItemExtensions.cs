@@ -530,4 +530,23 @@ public static class ItemExtensions
 
         return true;
     }
+
+    /// <summary>
+    /// Ensure an item has an upd object with a stack count of 1
+    /// </summary>
+    /// <param name="item">Item to check</param>
+    public static void EnsureItemHasValidStackCount(this Item item)
+    {
+        if (item.Upd is null)
+        {
+            item.AddUpd();
+            item.Upd.StackObjectsCount = 1;
+        }
+
+        if (item.Upd.StackObjectsCount is null or 0)
+        {
+            // Items pulled out of raid can have no stack count, default to 1
+            item.Upd.StackObjectsCount = 1;
+        }
+    }
 }

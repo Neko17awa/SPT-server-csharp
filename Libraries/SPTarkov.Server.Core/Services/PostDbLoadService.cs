@@ -6,6 +6,7 @@ using SPTarkov.Server.Core.Models.Enums;
 using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Servers;
+using SPTarkov.Server.Core.Utils;
 using SPTarkov.Server.Core.Utils.Cloners;
 
 namespace SPTarkov.Server.Core.Services;
@@ -21,6 +22,7 @@ public class PostDbLoadService(
     ItemBaseClassService itemBaseClassService,
     RaidWeatherService raidWeatherService,
     ConfigServer configServer,
+    RandomUtil randomUtil,
     ICloner cloner
 )
 {
@@ -42,14 +44,7 @@ public class PostDbLoadService(
         // add items gets left out,causing warnings
         itemBaseClassService.HydrateItemBaseClassCache();
 
-        // Validate that only mongoIds exist in items, quests, and traders
-        // Kill the startup if not.
-        // TODO: We can probably remove this in a couple versions
-        databaseService.ValidateDatabase();
-        if (!databaseService.IsDatabaseValid())
-        {
-            throw new Exception("Server start failure, database invalid");
-        }
+        ReduceStaticItemWeight();
 
         AddCustomLooseLootPositions();
 
@@ -59,7 +54,7 @@ public class PostDbLoadService(
 
         if (CoreConfig.Fixes.FixShotgunDispersion)
         {
-            FixShotgunDispersions();
+            FixShotgunDispersions(CoreConfig.Fixes.ShotgunIdsToFix);
         }
 
         if (LocationConfig.AddOpenZonesToAllMaps)
@@ -98,7 +93,7 @@ public class PostDbLoadService(
         AdjustHideoutCraftTimes(HideoutConfig.OverrideCraftTimeSeconds);
         AdjustHideoutBuildTimes(HideoutConfig.OverrideBuildTimeSeconds);
 
-        UnlockHideoutLootCrateCrafts();
+        UnlockHideoutLootCrateCrafts(HideoutConfig.HideoutLootCrateCraftIdsToUnlockInHideout);
 
         CloneExistingCraftsAndAddNew();
 
@@ -127,7 +122,7 @@ public class PostDbLoadService(
         AddCustomItemPresetsToGlobals();
 
         var currentSeason = seasonalEventService.GetActiveWeatherSeason();
-        raidWeatherService.GenerateWeather(currentSeason);
+        raidWeatherService.GenerateFutureWeatherAndCache(currentSeason);
 
         if (BotConfig.WeeklyBoss.Enabled)
         {
@@ -330,30 +325,30 @@ public class PostDbLoadService(
     protected void AddCustomLooseLootPositions()
     {
         var looseLootPositionsToAdd = LootConfig.LooseLoot;
-        foreach (var (mapId, positionsToAdd) in looseLootPositionsToAdd)
+        foreach (var (locationId, positionsToAdd) in looseLootPositionsToAdd)
         {
-            if (mapId is null)
+            if (locationId is null)
             {
-                logger.Warning(serverLocalisationService.GetText("location-unable_to_add_custom_loot_position", mapId));
+                logger.Warning(serverLocalisationService.GetText("location-unable_to_add_custom_loot_position", locationId));
 
                 continue;
             }
 
             databaseService
-                .GetLocation(mapId)
-                .LooseLoot.AddTransformer(looselootData =>
+                .GetLocation(locationId)
+                .LooseLoot.AddTransformer(looseLootData =>
                 {
-                    if (looselootData is null)
+                    if (looseLootData is null)
                     {
-                        logger.Warning(serverLocalisationService.GetText("location-map_has_no_loose_loot_data", mapId));
+                        logger.Warning(serverLocalisationService.GetText("location-map_has_no_loose_loot_data", locationId));
 
-                        return looselootData;
+                        return looseLootData;
                     }
 
                     foreach (var positionToAdd in positionsToAdd)
                     {
                         // Exists already, add new items to existing positions pool
-                        var existingLootPosition = looselootData.Spawnpoints.FirstOrDefault(x =>
+                        var existingLootPosition = looseLootData.Spawnpoints.FirstOrDefault(x =>
                             x.Template.Id == positionToAdd.Template.Id
                         );
 
@@ -369,27 +364,54 @@ public class PostDbLoadService(
                         }
 
                         // New position, add entire object
-                        looselootData.Spawnpoints = looselootData.Spawnpoints.Append(positionToAdd);
+                        looseLootData.Spawnpoints = looseLootData.Spawnpoints.Append(positionToAdd);
                     }
 
-                    return looselootData;
+                    return looseLootData;
+                });
+        }
+    }
+
+    protected void ReduceStaticItemWeight()
+    {
+        foreach (var (locationId, itemTplWeightDict) in LootConfig.StaticItemWeightAdjustment)
+        {
+            databaseService
+                .GetLocation(locationId)
+                .StaticLoot.AddTransformer(staticLootData =>
+                {
+                    if (staticLootData is null)
+                    {
+                        return staticLootData;
+                    }
+
+                    foreach (var (itemTpl, percentAdjustment) in itemTplWeightDict)
+                    {
+                        foreach (var loot in staticLootData)
+                        {
+                            var itemsWithTpl = loot.Value.ItemDistribution.Where(item => item.Tpl == itemTpl);
+                            foreach (var itemToAdjust in itemsWithTpl)
+                            {
+                                itemToAdjust.RelativeProbability = randomUtil.GetPercentOfValue(
+                                    percentAdjustment,
+                                    itemToAdjust.RelativeProbability.Value,
+                                    0
+                                );
+                            }
+                        }
+                    }
+
+                    return staticLootData;
                 });
         }
     }
 
     // BSG have two values for shotgun dispersion, we make sure both have the same value
-    protected void FixShotgunDispersions()
+    protected void FixShotgunDispersions(IEnumerable<MongoId> shotgunIds)
     {
         var itemDb = databaseService.GetItems();
 
-        var shotguns = new List<MongoId>
-        {
-            Weapons.SHOTGUN_12G_SAIGA_12K,
-            Weapons.SHOTGUN_20G_TOZ_106,
-            Weapons.SHOTGUN_12G_M870,
-            Weapons.SHOTGUN_12G_SAIGA_12K_FA,
-        };
-        foreach (var shotgunId in shotguns)
+        foreach (var shotgunId in shotgunIds)
         {
             if (itemDb.TryGetValue(shotgunId, out var shotgun) && shotgun.Properties.ShotgunDispersion.HasValue)
             {
@@ -403,15 +425,15 @@ public class PostDbLoadService(
         var locations = databaseService.GetLocations().GetDictionary();
 
         var pmcTypes = new HashSet<string> { "pmcUSEC", "pmcBEAR" };
-        foreach (var locationkvP in locations)
+        foreach (var (_, location) in locations)
         {
-            if (locationkvP.Value?.Base?.BossLocationSpawn is null)
+            if (location?.Base?.BossLocationSpawn is null)
             {
                 continue;
             }
 
-            locationkvP.Value.Base.BossLocationSpawn = locationkvP
-                .Value.Base.BossLocationSpawn.Where(bossSpawn => !pmcTypes.Contains(bossSpawn.BossName))
+            location.Base.BossLocationSpawn = location
+                .Base.BossLocationSpawn.Where(bossSpawn => !pmcTypes.Contains(bossSpawn.BossName))
                 .ToList();
         }
     }
@@ -595,16 +617,9 @@ public class PostDbLoadService(
         }
     }
 
-    protected void UnlockHideoutLootCrateCrafts()
+    protected void UnlockHideoutLootCrateCrafts(IEnumerable<MongoId> craftIdsToUnlock)
     {
-        var hideoutLootBoxCraftIds = new List<string>
-        {
-            "66582be04de4820934746cea",
-            "6745925da9c9adf0450d5bca",
-            "67449c79268737ef6908d636",
-        };
-
-        foreach (var craftId in hideoutLootBoxCraftIds)
+        foreach (var craftId in craftIdsToUnlock)
         {
             var recipe = databaseService.GetHideout().Production.Recipes.FirstOrDefault(craft => craft.Id == craftId);
             if (recipe is not null)

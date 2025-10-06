@@ -40,13 +40,11 @@ public class BotNameService(
     /// </summary>
     /// <param name="botJsonTemplate">bot JSON data from db</param>
     /// <param name="botGenerationDetails"></param>
-    /// <param name="botRole">role of bot e.g. assault</param>
     /// <param name="uniqueRoles">Lowercase roles to always make unique</param>
     /// <returns>Nickname for bot</returns>
     public string GenerateUniqueBotNickname(
         BotType botJsonTemplate,
         BotGenerationDetails botGenerationDetails,
-        string botRole,
         HashSet<string>? uniqueRoles = null
     )
     {
@@ -54,7 +52,7 @@ public class BotNameService(
 
         // Never show for players
         var showTypeInNickname = !botGenerationDetails.IsPlayerScav && BotConfig.ShowTypeInNickname;
-        var roleShouldBeUnique = uniqueRoles?.Contains(botRole.ToLowerInvariant());
+        var roleShouldBeUnique = uniqueRoles?.Contains(botGenerationDetails.RoleLowercase);
 
         var attempts = 0;
         while (attempts <= 5)
@@ -69,7 +67,7 @@ public class BotNameService(
             // Config is set to add role to end of bot name
             if (showTypeInNickname)
             {
-                name += $" {botRole}";
+                name += $" {botGenerationDetails.RoleLowercase}";
             }
 
             // Replace pmc bot names with player name + prefix
@@ -93,7 +91,7 @@ public class BotNameService(
                         if (logger.IsLogEnabled(LogLevel.Debug))
                         {
                             logger.Debug(
-                                $"Failed to find unique name for: {botRole} {botGenerationDetails.Side} after 5 attempts, using: {genericName}"
+                                $"Failed to find unique name for: {botGenerationDetails.RoleLowercase} {botGenerationDetails.Side} after 5 attempts, using: {genericName}"
                             );
                         }
 
@@ -114,7 +112,7 @@ public class BotNameService(
         }
 
         // Should never reach here
-        return $"BOT {botRole} {botGenerationDetails.BotDifficulty}";
+        return $"BOT {botGenerationDetails.RoleLowercase} {botGenerationDetails.BotDifficulty}";
     }
 
     private bool AddNameToCache(string name)

@@ -775,48 +775,6 @@ public class ItemHelper(
     }
 
     /// <summary>
-    ///     Splits the item stack if it exceeds its items StackMaxSize property into child items of the passed parent.
-    ///     TODO: untested
-    /// </summary>
-    /// <param name="itemWithChildren">Item (with children) to split into smaller stacks.</param>
-    /// <returns>List of root item + children.</returns>
-    public List<List<Item>> SplitStack(List<Item> itemWithChildren)
-    {
-        var originRootItem = itemWithChildren.FirstOrDefault();
-        if (originRootItem?.Upd?.StackObjectsCount is null)
-        {
-            return [itemWithChildren];
-        }
-
-        var maxStackSize = GetItem(originRootItem.Template).Value?.Properties?.StackMaxSize;
-        var remainingCount = originRootItem.Upd.StackObjectsCount;
-        List<List<Item>> result = [];
-
-        // If the current count is already equal or less than the max
-        // return the item as is.
-        if (remainingCount <= maxStackSize)
-        {
-            result.Add(itemWithChildren);
-
-            return result;
-        }
-
-        while (remainingCount > 0)
-        {
-            // Clone item and make IDs unique
-            var itemWithChildrenClone = cloner.Clone(itemWithChildren)!.ReplaceIDs().ToList();
-
-            // Set stack count to new value
-            var amount = Math.Min(remainingCount.Value, maxStackSize ?? 0);
-            itemWithChildrenClone[0].Upd!.StackObjectsCount = amount;
-            remainingCount -= amount;
-            result.Add(itemWithChildrenClone);
-        }
-
-        return result;
-    }
-
-    /// <summary>
     ///     Turns items like money into separate stacks that adhere to max stack size.
     /// </summary>
     /// <param name="itemToSplit">Item to split into smaller stacks.</param>
@@ -877,30 +835,6 @@ public class ItemHelper(
         }
 
         return matchingItems;
-    }
-
-    /// <summary>
-    ///     Replaces the _id value for the base item + all children that are children of it.
-    ///     REPARENTS ROOT ITEM ID, NOTHING ELSE.
-    /// </summary>
-    /// <param name="itemWithChildren">Item with mods to update.</param>
-    /// <param name="newId">New id to add on children of base item.</param>
-    public void ReplaceRootItemId(IEnumerable<Item> itemWithChildren, MongoId newId)
-    {
-        // original id on base item
-        var oldId = itemWithChildren.First().Id;
-
-        // Update base item to use new id
-        itemWithChildren.First().Id = newId;
-
-        // Update all parentIds of items attached to base item to use new id
-        foreach (var item in itemWithChildren)
-        {
-            if (item.ParentId != null && item.ParentId == oldId)
-            {
-                item.ParentId = newId;
-            }
-        }
     }
 
     /// <summary>
@@ -1300,23 +1234,6 @@ public class ItemHelper(
     }
 
     /// <summary>
-    /// Get a random cartridge from an items Filter property
-    /// </summary>
-    /// <param name="item">Db item template to look up Cartridge filter values from</param>
-    /// <returns>Valid caliber for cartridge</returns>
-    public MongoId? GetRandomCompatibleCaliberTemplateId(TemplateItem item)
-    {
-        var cartridges = item.Properties?.Cartridges?.FirstOrDefault()?.Properties?.Filters?.FirstOrDefault()?.Filter;
-        if (cartridges is null)
-        {
-            logger.Warning($"Failed to find cartridge for item: {item.Id} {item.Name}");
-            return null;
-        }
-
-        return randomUtil.GetArrayValue(cartridges);
-    }
-
-    /// <summary>
     ///     Add cartridges to the ammo box with correct max stack sizes
     /// </summary>
     /// <param name="ammoBox">Box to add cartridges to</param>
@@ -1359,18 +1276,6 @@ public class ItemHelper(
             currentStoredCartridgeCount += cartridgeCountToAdd;
             location--;
         }
-    }
-
-    /// <summary>
-    /// Add a single stack of cartridges to the ammo box
-    /// </summary>
-    /// <param name="ammoBox">Box item to add cartridges to</param>
-    /// <param name="ammoBoxDetails">Item template from items db</param>
-    public void AddSingleStackCartridgesToAmmoBox(List<Item> ammoBox, TemplateItem ammoBoxDetails)
-    {
-        var ammoBoxMaxCartridgeCount = ammoBoxDetails.Properties?.StackSlots?.First().MaxCount ?? 0;
-        var cartridgeTpl = ammoBoxDetails.Properties?.StackSlots?.First().Properties?.Filters?.First().Filter?.FirstOrDefault();
-        ammoBox.Add(CreateCartridges(ammoBox[0].Id, cartridgeTpl!.Value, (int)ammoBoxMaxCartridgeCount, 0));
     }
 
     /// <summary>

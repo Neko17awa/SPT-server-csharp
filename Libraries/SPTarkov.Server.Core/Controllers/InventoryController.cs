@@ -9,6 +9,7 @@ using SPTarkov.Server.Core.Models.Eft.Inventory;
 using SPTarkov.Server.Core.Models.Eft.ItemEvent;
 using SPTarkov.Server.Core.Models.Eft.Profile;
 using SPTarkov.Server.Core.Models.Enums;
+using SPTarkov.Server.Core.Models.Enums.Hideout;
 using SPTarkov.Server.Core.Models.Utils;
 using SPTarkov.Server.Core.Routers;
 using SPTarkov.Server.Core.Services;
@@ -856,8 +857,8 @@ public class InventoryController(
             return;
         }
 
-        EnsureItemHasValidStackCount(destinationItem);
-        EnsureItemHasValidStackCount(sourceItem);
+        destinationItem.EnsureItemHasValidStackCount();
+        sourceItem.EnsureItemHasValidStackCount();
 
         // Merging non Found in Raid (SpawnedInSession) items with FiR item causing result to be not Found in Raid
         if (!sourceItem.Upd.SpawnedInSession.GetValueOrDefault(false) && destinationItem.Upd.SpawnedInSession.GetValueOrDefault(false))
@@ -878,25 +879,6 @@ public class InventoryController(
             logger.Error(errorMessage);
 
             httpResponseUtil.AppendErrorToOutput(output, errorMessage);
-        }
-    }
-
-    /// <summary>
-    /// Ensure an item has a upd object with a stack count of 1
-    /// </summary>
-    /// <param name="item">Item to check</param>
-    protected void EnsureItemHasValidStackCount(Item item)
-    {
-        if (item.Upd is null)
-        {
-            item.AddUpd();
-            item.Upd.StackObjectsCount = 1;
-        }
-
-        if (item.Upd.StackObjectsCount is null or 0)
-        {
-            // Items pulled out of raid can have no stack count, default to 1
-            item.Upd.StackObjectsCount = 1;
         }
     }
 

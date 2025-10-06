@@ -42,6 +42,17 @@ public class GameCallbacks(
     /// <returns></returns>
     public ValueTask<string> GameStart(string url, EmptyRequestData _, MongoId sessionID)
     {
+        if (saveServer.IsProfileInvalidOrUnloadable(sessionID))
+        {
+            return new ValueTask<string>(
+                httpResponseUtil.GetBody(
+                    new GameStartResponse { UtcTime = 0 },
+                    Models.Enums.BackendErrorCodes.PlayerProfileNotFound,
+                    "This profile cannot be loaded due to it being invalid or unloadable!"
+                )
+            );
+        }
+
         var startTimestampSec = timeUtil.GetTimeStamp();
         gameController.GameStart(url, sessionID, startTimestampSec);
         return new ValueTask<string>(httpResponseUtil.GetBody(new GameStartResponse { UtcTime = startTimestampSec }));

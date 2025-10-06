@@ -19,7 +19,8 @@ public class LauncherV2Controller(
     DatabaseService databaseService,
     ServerLocalisationService serverLocalisationService,
     ConfigServer configServer,
-    Watermark watermark
+    Watermark watermark,
+    ProfileController profileController
 )
 {
     protected readonly CoreConfig CoreConfig = configServer.GetConfig<CoreConfig>();
@@ -83,30 +84,6 @@ public class LauncherV2Controller(
     }
 
     /// <summary>
-    ///     Make a password change.
-    /// </summary>
-    /// <param name="info"></param>
-    /// <returns></returns>
-    public async Task<bool> PasswordChange(ChangeRequestData info)
-    {
-        var sessionId = GetSessionId(info);
-
-        if (sessionId.IsEmpty)
-        {
-            return false;
-        }
-
-        if (!Login(info))
-        {
-            return false;
-        }
-
-        saveServer.GetProfile(sessionId).ProfileInfo!.Password = info.Change;
-        await saveServer.SaveProfileAsync(sessionId);
-        return true;
-    }
-
-    /// <summary>
     ///     Remove profile from server.
     /// </summary>
     /// <param name="info"></param>
@@ -162,7 +139,6 @@ public class LauncherV2Controller(
             ScavengerId = scavId,
             Aid = hashUtil.GenerateAccountId(),
             Username = info.Username,
-            Password = info.Password,
             IsWiped = true,
             Edition = info.Edition,
         };
@@ -179,7 +155,7 @@ public class LauncherV2Controller(
     {
         foreach (var (sessionId, profile) in saveServer.GetProfiles())
         {
-            if (info.Username == profile.ProfileInfo!.Username && info.Password == profile.ProfileInfo.Password)
+            if (info.Username == profile.ProfileInfo!.Username)
             {
                 return sessionId;
             }
@@ -191,5 +167,10 @@ public class LauncherV2Controller(
     public SptProfile GetProfile(MongoId sessionId)
     {
         return saveServer.GetProfile(sessionId);
+    }
+
+    public MiniProfile? GetMiniProfileFromUsername(LoginRequestData info)
+    {
+        return profileController.GetMiniProfile(GetSessionId(info));
     }
 }

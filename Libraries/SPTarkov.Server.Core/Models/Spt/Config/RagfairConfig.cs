@@ -227,6 +227,42 @@ public record Dynamic
     /// </summary>
     [JsonPropertyName("itemPriceOverrideRouble")]
     public required Dictionary<MongoId, double> ItemPriceOverrideRouble { get; set; }
+
+    [JsonPropertyName("generateBaseFleaPrices")]
+    public GenerateFleaPrices GenerateBaseFleaPrices { get; set; }
+}
+
+public record GenerateFleaPrices
+{
+    /// <summary>
+    /// Should handbook prices be used (true) as a base or the values already in prices.json (false)
+    /// </summary>
+    [JsonPropertyName("useHandbookPrice")]
+    public bool UseHandbookPrice { get; set; }
+
+    /// <summary>
+    /// Multiplier to apply to handbook price
+    /// </summary>
+    [JsonPropertyName("priceMultiplier")]
+    public double PriceMultiplier { get; set; }
+
+    /// <summary>
+    /// Don't allow prices being added that are below sell to trader price. Prevent ability to buy cheap items on flea and sell to traders for easy rep
+    /// </summary>
+    [JsonPropertyName("preventPriceBeingBelowTraderBuyPrice")]
+    public bool PreventPriceBeingBelowTraderBuyPrice { get; set; }
+
+    [JsonPropertyName("itemTplMultiplierOverride")]
+    public Dictionary<MongoId, double> ItemTplMultiplierOverride { get; set; }
+
+    [JsonPropertyName("itemTypeMultiplierOverride")]
+    public Dictionary<MongoId, double> ItemTypeMultiplierOverride { get; set; }
+
+    [JsonPropertyName("useHideoutCraftMultiplier")]
+    public bool UseHideoutCraftMultiplier { get; set; }
+
+    [JsonPropertyName("hideoutCraftMultiplier")]
+    public double HideoutCraftMultiplier { get; set; }
 }
 
 public record PriceRanges
