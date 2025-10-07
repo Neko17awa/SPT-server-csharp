@@ -6164,7 +6164,7 @@
       },
       "weaponbuilds": {}
     },
-	"customFlags": {}
+    "customFlags": {}
   },
   "Left Behind": {
     "descriptionLocaleKey": "launcher-profile_leftbehind",
@@ -13428,7 +13428,7 @@
       },
       "weaponbuilds": {}
     },
-	"customFlags": {}
+    "customFlags": {}
   },
   "Prepare To Escape": {
     "descriptionLocaleKey": "launcher-profile_preparetoescape",
@@ -21800,7 +21800,7 @@
       },
       "weaponbuilds": {}
     },
-	"customFlags": {}
+    "customFlags": {}
   },
   "Edge Of Darkness": {
     "descriptionLocaleKey": "launcher-profile-edgeofdarkness",
@@ -30299,7 +30299,7 @@
       },
       "weaponbuilds": {}
     },
-	"customFlags": {}
+    "customFlags": {}
   },
   "Unheard": {
     "descriptionLocaleKey": "launcher-profile-unheard",
@@ -40561,7 +40561,7 @@
       },
       "weaponbuilds": {}
     },
-	"customFlags": {}
+    "customFlags": {}
   },
   "Tournament": {
     "descriptionLocaleKey": "launcher-profile-tournament",
@@ -42741,7 +42741,7 @@
       },
       "weaponbuilds": {}
     },
-	"customFlags": {}
+    "customFlags": {}
   },
   "SPT Developer": {
     "descriptionLocaleKey": "launcher-profile_sptdeveloper",
@@ -49250,7 +49250,7 @@
       },
       "weaponbuilds": {}
     },
-	"customFlags": {}
+    "customFlags": {}
   },
   "SPT Easy start": {
     "descriptionLocaleKey": "launcher-profile_spteasystart",
@@ -56364,7 +56364,7 @@
       },
       "weaponbuilds": {}
     },
-	"customFlags": {}
+    "customFlags": {}
   },
   "SPT Zero to hero": {
     "descriptionLocaleKey": "launcher-profile_sptzerotohero",
@@ -58533,6 +58533,6 @@
       },
       "weaponbuilds": {}
     },
-	"customFlags": {}
+    "customFlags": {}
   }
 }
