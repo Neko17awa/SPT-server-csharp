@@ -44,7 +44,7 @@
 
                 <MudStack class="contributor-section">
                     <MudGrid Justify="Justify.Center">
-                        @foreach (var contributor in ShuffledContributors)
+                        @foreach (var contributor in _shuffledContributors)
                         {
                             <MudItem xs="10" sm="5" md="4">
                                 <MudCard Class="contributor-card" @onclick="() => TriggerConfetti(false, contributor)">
@@ -79,7 +79,7 @@
 
                 <MudStack class="contributor-section patreon-section">
                     <MudGrid Justify="Justify.Center">
-                        @foreach (var supporter in ShuffledPatreonSupporters)
+                        @foreach (var supporter in _shuffledPatreonSupporters)
                         {
                             <MudItem xs="10" sm="5" md="4">
                                 <MudCard Class="contributor-card patreon-card" @onclick="() => TriggerConfetti(true, supporter)">
@@ -347,8 +347,8 @@
 
 
 @code {
-    private readonly List<string> Contributors = new()
-    {
+    private readonly List<string> _contributors =
+    [
         "5o2", "AdmiralAwsum", "Angel-git", "ArchangelWTF", "BrotherVeren",
         "CameronW1", "CJ", "Clodan", "CP89", "CWX", "DanW", "devmaximum",
         "Doup22", "DrakiaXYZ", "fearthedje", "GentlemenSausage", "Guidot42",
@@ -358,16 +358,25 @@
         "Shibdib", "Stealthsuit", "studentchy", "Tetris", "Th3NightHawk",
         "TheHeadPhonesGuy", "ThyMuffinMan", "ultragastro", "Valens",
         "XeonDead", "yurikus", "Chilly"
-    };
+    ];
 
-    private readonly List<string> PatreonSupporters = new()
-    {
-        "Refringe", "DrakiaXYZ", "Tron", "Bepis", "John Thicc",
-        "Cardsmen", "Nexstat", "NumberedJester", "Irabeth Tyrabade", "DanW"
-    };
+    private readonly List<string> _patreonSupporters =
+    [
+        "Refringe",
+        "DrakiaXYZ",
+        "Tron",
+        "Bepis",
+        "John Thicc",
+        "Cardsmen",
+        "Nexstat",
+        "NumberedJester",
+        "Irabeth Tyrabade",
+        "DanW",
+        "Grampa Teems"
+    ];
 
-    private List<string> ShuffledContributors = new();
-    private List<string> ShuffledPatreonSupporters = new();
+    private List<string> _shuffledContributors = [];
+    private List<string> _shuffledPatreonSupporters = [];
 
     private readonly MudTheme _theme = new()
     {
@@ -387,13 +396,13 @@
 
     protected override void OnInitialized()
     {
-        ShuffledContributors = ShuffleList(Contributors);
-        ShuffledPatreonSupporters = ShuffleList(PatreonSupporters);
+        _shuffledContributors = ShuffleList(_contributors);
+        _shuffledPatreonSupporters = ShuffleList(_patreonSupporters);
     }
 
     private async Task TriggerConfetti(bool isPatreon, string name)
     {
-        //Todo: Needs implemnetation
+        //Todo: Needs implementation
 
         if (isPatreon)
         {
