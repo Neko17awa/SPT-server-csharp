@@ -14,6 +14,12 @@ public record ProfileSides
 
     [JsonPropertyName("bear")]
     public TemplateSide? Bear { get; set; }
+
+    /// <summary>
+    /// Custom flags can be stored here
+    /// </summary>
+    [JsonPropertyName("customFlags")]
+    public Dictionary<string, bool> CustomFlags { get; set; }
 }
 
 public record TemplateSide
