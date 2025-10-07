@@ -14,7 +14,7 @@ public record TestModMetadata : AbstractModMetadata, IModWebMetadata
     public override string Author { get; init; } = "SPTarkov";
     public override List<string>? Contributors { get; init; }
     public override Version Version { get; init; } = new("1.0.0");
-    public override Version SptVersion { get; init; } = new("4.0.0");
+    public override Version SptVersion { get; init; } = new("~4.0.0");
     public override List<string>? Incompatibilities { get; init; }
     public override Dictionary<string, Version>? ModDependencies { get; init; }
     public override string? Url { get; init; }
