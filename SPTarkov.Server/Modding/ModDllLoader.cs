@@ -115,9 +115,9 @@ public class ModDllLoader
                 {
                     try
                     {
-                        result = (AbstractModMetadata) Activator.CreateInstance(modMetadata)!;
+                        result = (AbstractModMetadata)Activator.CreateInstance(modMetadata)!;
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         throw new Exception($"Failed to load mod metadata for: {Path.GetFullPath(path)} \n{ex}");
                     }
