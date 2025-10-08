@@ -26,17 +26,23 @@ public record RagfairConfig : BaseConfig
     [JsonPropertyName("sell")]
     public required Sell Sell { get; set; }
 
+    [JsonPropertyName("dynamic")]
+    public required Dynamic Dynamic { get; set; }
+
+    [JsonPropertyName("tieredFlea")]
+    public required TieredFlea TieredFlea { get; set; }
+
     /// <summary>
     ///     Trader ids + should their assorts be listed on flea
     /// </summary>
     [JsonPropertyName("traders")]
     public required Dictionary<MongoId, bool> Traders { get; set; }
 
-    [JsonPropertyName("dynamic")]
-    public required Dynamic Dynamic { get; set; }
-
-    [JsonPropertyName("tieredFlea")]
-    public required TieredFlea TieredFlea { get; set; }
+    /// <summary>
+    /// Flea tax multi, default is off (-1)
+    /// </summary>
+    [JsonPropertyName("offerListingTaxMultiplier")]
+    public int OfferListingTaxMultiplier { get; set; }
 }
 
 public record Sell
