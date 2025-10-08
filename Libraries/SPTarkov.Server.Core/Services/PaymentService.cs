@@ -79,7 +79,7 @@ public class PaymentService(
         var requestTransactionId = new MongoId(request.TransactionId);
 
         // Who is recipient of money player is sending
-        var payToTrader = request.Type == "buy_from_ragfair_trader" && traderHelper.TraderExists(requestTransactionId);
+        var payToTrader = traderHelper.TraderExists(requestTransactionId);
 
         // May need to convert to trader currency
         var trader = payToTrader ? traderHelper.GetTrader(requestTransactionId, sessionID) : new TraderBase { Currency = CurrencyType.RUB }; // TODO: cleanup
