@@ -3,7 +3,7 @@
     "Chance": 100.0,
     "ChancePVE": 100.0,
     "Count": 0,
-    "CountPve": 0,
+    "CountPVE": 0,
     "EntryPoints": "Factory",
     "EventAvailable": false,
     "ExfiltrationTime": 5.0,
