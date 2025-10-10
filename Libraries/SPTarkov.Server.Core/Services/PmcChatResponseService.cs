@@ -144,7 +144,7 @@ public class PmcChatResponseService(
             var giftKeys = giftService.GetGiftIds();
             var randomGiftKey = randomUtil.GetArrayValue(giftKeys);
 
-            Regex.Replace(responseText, "/(%giftcode%)/gi", randomGiftKey); // TODO: does regex still work
+            responseText = Regex.Replace(responseText, "/(%giftcode%)/gi", randomGiftKey);
         }
 
         if (AppendSuffixToMessageEnd(isVictim))
