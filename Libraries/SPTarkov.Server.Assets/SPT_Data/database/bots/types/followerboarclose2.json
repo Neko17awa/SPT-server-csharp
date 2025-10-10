@@ -169,6 +169,9 @@
       }
     },
     "Ammo": {
+	"Caliber40mmRU": {
+        "5656eb674bdc2d35148b457c": 1
+      },
       "Caliber12g": {
         "5d6e6869a4b9361c140bcfde": 1760,
         "5d6e6911a4b9361bd5780d52": 5000,
