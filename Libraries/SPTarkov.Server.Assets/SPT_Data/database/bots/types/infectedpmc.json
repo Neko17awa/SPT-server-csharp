@@ -64,8 +64,8 @@
     "BodyParts": [
       {
         "Head": {
-          "min": 60,
-          "max": 60
+          "min": 10,
+          "max": 10
         },
         "Chest": {
           "min": 180,
