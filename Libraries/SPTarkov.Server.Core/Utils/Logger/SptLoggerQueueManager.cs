@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using SPTarkov.DI.Annotations;
 
 namespace SPTarkov.Server.Core.Utils.Logger;
@@ -10,8 +11,7 @@ public class SptLoggerQueueManager(IEnumerable<ILogHandler> logHandlers)
     private Thread? _loggerTask;
     private readonly Lock LoggerTaskLock = new();
     private readonly CancellationTokenSource _loggerCancellationTokens = new();
-    private readonly Queue<SptLogMessage> _messageQueue = new();
-    private readonly Lock _messageQueueLock = new();
+    private readonly BlockingCollection<SptLogMessage> _messageQueue = new();
     private Dictionary<LoggerType, ILogHandler>? _logHandlers;
     private SptLoggerConfiguration _config;
 
@@ -35,29 +35,16 @@ public class SptLoggerQueueManager(IEnumerable<ILogHandler> logHandlers)
     {
         while (!_loggerCancellationTokens.IsCancellationRequested)
         {
-            lock (_messageQueueLock)
+            try
             {
-                if (_messageQueue.Count != 0)
-                {
-                    while (_messageQueue.TryDequeue(out var message))
-                    {
-                        LogMessage(message);
-                    }
-                }
-            }
-
-            Thread.Sleep((int)_config.PoolingTimeMs);
-        }
-
-        lock (_messageQueueLock)
-        {
-            // make sure after cancellation that no messages are outstanding
-            if (_messageQueue.Count != 0)
-            {
-                while (_messageQueue.TryDequeue(out var message))
+                foreach (var message in _messageQueue.GetConsumingEnumerable(_loggerCancellationTokens.Token))
                 {
                     LogMessage(message);
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Logger queue caught exception: {ex}");
             }
         }
     }
@@ -106,10 +93,7 @@ public class SptLoggerQueueManager(IEnumerable<ILogHandler> logHandlers)
 
     public void EnqueueMessage(SptLogMessage message)
     {
-        lock (_messageQueueLock)
-        {
-            _messageQueue.Enqueue(message);
-        }
+        _messageQueue.TryAdd(message);
     }
 
     public void DumpAndStop()

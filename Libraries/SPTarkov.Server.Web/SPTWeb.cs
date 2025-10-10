@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.FileProviders;
+﻿using System.Reflection;
+using Microsoft.Extensions.FileProviders;
 using MudBlazor.Services;
 using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Web.Components;
@@ -8,6 +9,7 @@ namespace SPTarkov.Server.Web;
 public static class SPTWeb
 {
     internal static IEnumerable<SptMod> SptWebMods = [];
+    internal static List<Assembly> SptWebModsAssemblies = [];
 
     public static void InitializeSptBlazor(this WebApplicationBuilder builder, IReadOnlyList<SptMod> sptMods)
     {
@@ -39,6 +41,7 @@ public static class SPTWeb
             foreach (var assembly in mod.Assemblies)
             {
                 razorBuilder.AddAdditionalAssemblies(assembly);
+                SptWebModsAssemblies.Add(assembly);
             }
 
             var modAssembly = mod.ModMetadata.GetType().Assembly;

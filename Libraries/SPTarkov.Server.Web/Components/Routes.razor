@@ -1,7 +1,7 @@
 ﻿@using System.Reflection
 @using SPTarkov.Server.Web.Components.Layout
 
-<Router AppAssembly="@typeof(SPTWeb).Assembly">
+<Router AppAssembly="@typeof(SPTWeb).Assembly" AdditionalAssemblies="SPTWeb.SptWebModsAssemblies">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(BaseMainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
