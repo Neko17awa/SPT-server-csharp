@@ -610,9 +610,13 @@ public class BotWeaponGenerator(
                 );
             }
 
-            // Immediately returns, default ammo is guaranteed to be compatible
-            // it is not guaranteed to even have a default ammo
-            return weaponTemplate.Properties.DefAmmo.Value;
+            if (weaponTemplate.Properties.DefAmmo.HasValue)
+            {
+                return weaponTemplate.Properties.DefAmmo.Value;
+            }
+
+            // last ditch attempt to get default ammo tpl
+            return weaponTemplate.Properties.Chambers.FirstOrDefault().Properties.Filters.FirstOrDefault().Filter.FirstOrDefault();
         }
 
         // Get cartridges the weapons first chamber allow
@@ -712,10 +716,8 @@ public class BotWeaponGenerator(
 
         // Try to get cartridges from slots array first, if none found, try Cartridges array
         var cartridges =
-            magazineTemplate.Value.Properties.Slots.FirstOrDefault()?.Properties?.Filters.FirstOrDefault()?.Filter ?? magazineTemplate
-                .Value.Properties.Cartridges.FirstOrDefault()
-                ?.Properties?.Filters.FirstOrDefault()
-                ?.Filter;
+            magazineTemplate.Value.Properties.Slots.FirstOrDefault()?.Properties?.Filters?.FirstOrDefault()?.Filter
+            ?? magazineTemplate.Value.Properties.Cartridges.FirstOrDefault()?.Properties?.Filters?.FirstOrDefault()?.Filter;
 
         return cartridges ?? [];
     }
