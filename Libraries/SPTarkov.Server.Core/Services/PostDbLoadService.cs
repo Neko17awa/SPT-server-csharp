@@ -77,6 +77,8 @@ public class PostDbLoadService(
             AdjustMapBotLimits();
         }
 
+        FixDogtagCaseNotAcceptingAllDogtags();
+
         AdjustLooseLootSpawnProbabilities();
 
         AdjustLocationBotValues();
@@ -129,6 +131,49 @@ public class PostDbLoadService(
             var chosenBoss = GetWeeklyBoss(BotConfig.WeeklyBoss.BossPool, BotConfig.WeeklyBoss.ResetDay);
             FlagMapAsGuaranteedBoss(chosenBoss);
         }
+    }
+
+    private void FixDogtagCaseNotAcceptingAllDogtags()
+    {
+        //Find case to add new ids to
+        if (!databaseService.GetItems().TryGetValue(ItemTpl.CONTAINER_DOGTAG_CASE, out var dogtagCase))
+        {
+            return;
+        }
+
+        // Find the grid in case we want to add ids to
+        var filterSet = dogtagCase.Properties?.Grids?.FirstOrDefault()?.Properties?.Filters?.FirstOrDefault()?.Filter;
+        if (filterSet is null)
+        {
+            return;
+        }
+
+        MongoId[] dogtagTpls =
+        [
+            new("59f32bb586f774757e1e8442"),
+            new("59f32c3b86f77472a31742f0"),
+            new("6662ea05f6259762c56f3189"),
+            new("6662e9f37fa79a6d83730fa0"),
+            new("6662e9cda7e0b43baa3d5f76"),
+            new("6662e9aca7e0b43baa3d5f74"),
+            new("675dc9d37ae1a8792107ca96"),
+            new("675dcb0545b1a2d108011b2b"),
+            new("6764207f2fa5e32733055c4a"),
+            new("6764202ae307804338014c1a"),
+            new("6746fd09bafff85008048838"),
+            new("67471928d17d6431550563b5"),
+            new("674731c8bafff850080488bb"),
+            new("684180bc51bf8645f7067bc8"),
+            new("684181208d035f60230f63f9"),
+            new("67471938bafff850080488b7"),
+            new("6747193f170146228c0d2226"),
+            new("674731d1170146228c0d222a"),
+            new("68418091b5b0c9e4c60f0e7a"),
+            new("684180ee9b6d80d840042e8a"),
+        ];
+
+        // Add all ids to grid
+        filterSet.UnionWith(dogtagTpls);
     }
 
     /// <summary>
