@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using Microsoft.Extensions.Logging;
 using SPTarkov.DI.Annotations;
 
 namespace SPTarkov.Server.Core.Utils.Logger;
@@ -34,7 +33,7 @@ public class SptLoggerQueueManager(IEnumerable<ILogHandler> logHandlers)
 
     private void LoggerWorkerThread()
     {
-        while (!_loggerCancellationTokens.Token.IsCancellationRequested)
+        while (!_loggerCancellationTokens.IsCancellationRequested)
         {
             try
             {
