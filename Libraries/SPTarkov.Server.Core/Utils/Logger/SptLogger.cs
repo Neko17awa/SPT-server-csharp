@@ -6,7 +6,7 @@ using LogLevel = SPTarkov.Server.Core.Models.Spt.Logging.LogLevel;
 namespace SPTarkov.Server.Core.Utils.Logger;
 
 [Injectable(TypePriority = int.MinValue)]
-public class SptLogger<T> : ISptLogger<T>, IDisposable
+public class SptLogger<T> : ISptLogger<T>
 {
     private string _category;
     private readonly SptLoggerQueueManager _loggerQueueManager;
@@ -203,11 +203,6 @@ public class SptLogger<T> : ISptLogger<T>, IDisposable
     }
 
     public void DumpAndStop()
-    {
-        _loggerQueueManager.DumpAndStop();
-    }
-
-    public void Dispose()
     {
         _loggerQueueManager.DumpAndStop();
     }
