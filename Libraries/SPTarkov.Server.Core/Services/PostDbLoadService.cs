@@ -133,7 +133,10 @@ public class PostDbLoadService(
         }
     }
 
-    private void FixDogtagCaseNotAcceptingAllDogtags()
+    /// <summary>
+    /// BSG don't have all the new dogtag types in the containers allowed list
+    /// </summary>
+    protected void FixDogtagCaseNotAcceptingAllDogtags()
     {
         //Find case to add new ids to
         if (!databaseService.GetItems().TryGetValue(ItemTpl.CONTAINER_DOGTAG_CASE, out var dogtagCase))

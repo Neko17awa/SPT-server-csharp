@@ -467,6 +467,16 @@ public class SeasonalEventService(
 
         AddPumpkinsToScavBackpacks();
         AdjustTraderIcons(eventType.Type);
+
+        if (databaseService.GetBots().Types.TryGetValue("bear", out var bear))
+        {
+            bear.BotAppearance.Head[new MongoId("6644d2da35d958070c02642c")] = 30;
+        }
+
+        if (databaseService.GetBots().Types.TryGetValue("usec", out var usec))
+        {
+            usec.BotAppearance.Head[new MongoId("6644d2da35d958070c02642c")] = 30;
+        }
     }
 
     protected void ApplyChristmasEvent(SeasonalEvent eventType, Config globalConfig)
