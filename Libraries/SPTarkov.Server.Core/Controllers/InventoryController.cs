@@ -466,7 +466,7 @@ public class InventoryController(
             }
             catch
             {
-                logger.Error(serverLocalisationService.GetText("inventory-examine_item_does_not_exist", request.ItemId));
+                logger.Error(serverLocalisationService.GetText("inventory-examine_item_does_not_exist", request.ItemId.ToString()));
             }
         }
 
