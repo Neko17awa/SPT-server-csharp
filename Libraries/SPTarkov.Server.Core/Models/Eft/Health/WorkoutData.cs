@@ -1,7 +1,6 @@
 using System.Text.Json.Serialization;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Utils;
-using Mastering = SPTarkov.Server.Core.Models.Eft.Common.Mastering;
 
 namespace SPTarkov.Server.Core.Models.Eft.Health;
 
@@ -17,7 +16,7 @@ public record WorkoutSkills
     public List<CommonSkill> Common { get; set; }
 
     [JsonPropertyName("Mastering")]
-    public List<Mastering>? Mastering { get; set; }
+    public List<MasterySkill>? Mastering { get; set; }
 
     [JsonPropertyName("Bonuses")]
     public Bonus? Bonuses { get; set; }
