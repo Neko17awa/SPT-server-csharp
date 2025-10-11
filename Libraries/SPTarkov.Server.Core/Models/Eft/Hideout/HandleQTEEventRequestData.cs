@@ -17,6 +17,9 @@ public record HandleQTEEventRequestData : InventoryBaseActionRequestData
     [JsonPropertyName("id")]
     public string? Id { get; set; }
 
+    [JsonPropertyName("aid")]
+    public string? Aid { get; set; }
+
     [JsonPropertyName("timestamp")]
     public long? Timestamp { get; set; }
 }
