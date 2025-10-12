@@ -519,10 +519,7 @@ public class InventoryController(
         // Not fence
         // get tpl from trader assort
         {
-            return databaseService
-                .GetTrader(request.FromOwner.Id)
-                .Assort.Items.FirstOrDefault(item => item.Id == request.ItemId)
-                ?.Template;
+            return databaseService.GetTrader(request.FromOwner.Id).Assort.Items.FirstOrDefault(item => item.Id == request.ItemId)?.Template;
         }
 
         if (request.FromOwner.Type == "RagFair")
