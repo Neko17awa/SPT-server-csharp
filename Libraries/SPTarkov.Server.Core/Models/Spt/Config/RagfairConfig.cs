@@ -26,17 +26,23 @@ public record RagfairConfig : BaseConfig
     [JsonPropertyName("sell")]
     public required Sell Sell { get; set; }
 
+    [JsonPropertyName("dynamic")]
+    public required Dynamic Dynamic { get; set; }
+
+    [JsonPropertyName("tieredFlea")]
+    public required TieredFlea TieredFlea { get; set; }
+
     /// <summary>
     ///     Trader ids + should their assorts be listed on flea
     /// </summary>
     [JsonPropertyName("traders")]
     public required Dictionary<MongoId, bool> Traders { get; set; }
 
-    [JsonPropertyName("dynamic")]
-    public required Dynamic Dynamic { get; set; }
-
-    [JsonPropertyName("tieredFlea")]
-    public required TieredFlea TieredFlea { get; set; }
+    /// <summary>
+    /// Flea tax multi, default is off (-1)
+    /// </summary>
+    [JsonPropertyName("offerListingTaxMultiplier")]
+    public int OfferListingTaxMultiplier { get; set; }
 }
 
 public record Sell
@@ -227,6 +233,42 @@ public record Dynamic
     /// </summary>
     [JsonPropertyName("itemPriceOverrideRouble")]
     public required Dictionary<MongoId, double> ItemPriceOverrideRouble { get; set; }
+
+    [JsonPropertyName("generateBaseFleaPrices")]
+    public GenerateFleaPrices GenerateBaseFleaPrices { get; set; }
+}
+
+public record GenerateFleaPrices
+{
+    /// <summary>
+    /// Should handbook prices be used (true) as a base or the values already in prices.json (false)
+    /// </summary>
+    [JsonPropertyName("useHandbookPrice")]
+    public bool UseHandbookPrice { get; set; }
+
+    /// <summary>
+    /// Multiplier to apply to handbook price
+    /// </summary>
+    [JsonPropertyName("priceMultiplier")]
+    public double PriceMultiplier { get; set; }
+
+    /// <summary>
+    /// Don't allow prices being added that are below sell to trader price. Prevent ability to buy cheap items on flea and sell to traders for easy rep
+    /// </summary>
+    [JsonPropertyName("preventPriceBeingBelowTraderBuyPrice")]
+    public bool PreventPriceBeingBelowTraderBuyPrice { get; set; }
+
+    [JsonPropertyName("itemTplMultiplierOverride")]
+    public Dictionary<MongoId, double> ItemTplMultiplierOverride { get; set; }
+
+    [JsonPropertyName("itemTypeMultiplierOverride")]
+    public Dictionary<MongoId, double> ItemTypeMultiplierOverride { get; set; }
+
+    [JsonPropertyName("useHideoutCraftMultiplier")]
+    public bool UseHideoutCraftMultiplier { get; set; }
+
+    [JsonPropertyName("hideoutCraftMultiplier")]
+    public double HideoutCraftMultiplier { get; set; }
 }
 
 public record PriceRanges

@@ -54,21 +54,17 @@ public class BotWeaponGenerator(
     /// <param name="sessionId">Session identifier</param>
     /// <param name="equipmentSlot">Primary/secondary/holster</param>
     /// <param name="botTemplateInventory">e.g. assault.json</param>
-    /// <param name="weaponParentId"></param>
+    /// <param name="botGenerationDetails">Details related to generating a bot</param>
+    /// <param name="weaponParentId">Details related to generating a bot</param>
     /// <param name="modChances"></param>
-    /// <param name="botRole">Role of bot, e.g. assault/followerBully</param>
-    /// <param name="isPmc">Is weapon generated for a pmc</param>
-    /// <param name="botLevel"></param>
     /// <returns>GenerateWeaponResult object</returns>
     public GenerateWeaponResult? GenerateRandomWeapon(
         MongoId sessionId,
         string equipmentSlot,
         BotTypeInventory botTemplateInventory,
+        BotGenerationDetails botGenerationDetails,
         MongoId weaponParentId,
-        Dictionary<string, double> modChances,
-        string botRole,
-        bool isPmc,
-        int botLevel
+        Dictionary<string, double> modChances
     )
     {
         var weaponTpl = PickWeightedWeaponTemplateFromPool(equipmentSlot, botTemplateInventory);
@@ -79,9 +75,7 @@ public class BotWeaponGenerator(
             botTemplateInventory,
             weaponParentId,
             modChances,
-            botRole,
-            isPmc,
-            botLevel
+            botGenerationDetails
         );
     }
 
@@ -111,9 +105,7 @@ public class BotWeaponGenerator(
     /// <param name="botTemplateInventory">e.g. assault.json.</param>
     /// <param name="weaponParentId">Parent ID of the weapon being generated.</param>
     /// <param name="modChances">Dictionary of item types and % chance weapon will have that mod.</param>
-    /// <param name="botRole">e.g. assault/exusec.</param>
-    /// <param name="isPmc">Is weapon being generated for a PMC.</param>
-    /// <param name="botLevel">The level of the bot.</param>
+    /// <param name="botGenerationDetails"></param>
     /// <returns>GenerateWeaponResult object.</returns>
     public GenerateWeaponResult? GenerateWeaponByTpl(
         MongoId sessionId,
@@ -122,9 +114,7 @@ public class BotWeaponGenerator(
         BotTypeInventory botTemplateInventory,
         MongoId weaponParentId,
         Dictionary<string, double> modChances,
-        string botRole,
-        bool isPmc,
-        int botLevel
+        BotGenerationDetails botGenerationDetails
     )
     {
         var modPool = botTemplateInventory.Mods;
@@ -141,17 +131,24 @@ public class BotWeaponGenerator(
         // Find ammo to use when filling magazines/chamber
         if (botTemplateInventory.Ammo is null)
         {
-            logger.Error(serverLocalisationService.GetText("bot-no_ammo_found_in_bot_json", botRole));
+            logger.Error(serverLocalisationService.GetText("bot-no_ammo_found_in_bot_json", botGenerationDetails.RoleLowercase));
             logger.Error(serverLocalisationService.GetText("bot-generation_failed"));
         }
 
         var ammoTpl = GetWeightedCompatibleAmmo(botTemplateInventory.Ammo, weaponItemTemplate);
 
         // Create with just base weapon item
-        var weaponWithModsArray = ConstructWeaponBaseList(weaponTpl, weaponParentId, slotName, weaponItemTemplate, botRole).ToList();
+        var weaponWithModsArray = ConstructWeaponBaseList(
+                weaponTpl,
+                weaponParentId,
+                slotName,
+                weaponItemTemplate,
+                botGenerationDetails.RoleLowercase
+            )
+            .ToList();
 
         // Chance to add randomised weapon enhancement
-        if (isPmc && randomUtil.GetChance100(PMCConfig.WeaponHasEnhancementChancePercent))
+        if (botGenerationDetails.IsPmc && randomUtil.GetChance100(PMCConfig.WeaponHasEnhancementChancePercent))
         // Add buff to weapon root
         {
             repairService.AddBuff(RepairConfig.RepairKit.Weapon, weaponWithModsArray[0]);
@@ -161,7 +158,7 @@ public class BotWeaponGenerator(
         if (modPool.ContainsKey(weaponTpl))
         {
             // Role to treat bot as e.g. pmc/scav/boss
-            var botEquipmentRole = botGeneratorHelper.GetBotEquipmentRole(botRole);
+            var botEquipmentRole = botGeneratorHelper.GetBotEquipmentRole(botGenerationDetails.RoleLowercase);
 
             // Different limits if bot is boss vs scav
             var modLimits = botWeaponModLimitService.GetWeaponModLimits(botEquipmentRole);
@@ -176,8 +173,8 @@ public class BotWeaponGenerator(
                 AmmoTpl = ammoTpl,
                 BotData = new BotData
                 {
-                    Role = botRole,
-                    Level = botLevel,
+                    Role = botGenerationDetails.RoleLowercase,
+                    Level = botGenerationDetails.BotLevel,
                     EquipmentRole = botEquipmentRole,
                 },
                 ModLimits = modLimits,
@@ -188,10 +185,16 @@ public class BotWeaponGenerator(
         }
 
         // Use weapon preset from globals.json if weapon isn't valid
-        if (!IsWeaponValid(weaponWithModsArray, botRole))
+        if (!IsWeaponValid(weaponWithModsArray, botGenerationDetails.RoleLowercase))
         // Weapon is bad, fall back to weapons preset
         {
-            weaponWithModsArray = GetPresetWeaponMods(weaponTpl, slotName, weaponParentId, weaponItemTemplate, botRole);
+            weaponWithModsArray = GetPresetWeaponMods(
+                weaponTpl,
+                slotName,
+                weaponParentId,
+                weaponItemTemplate,
+                botGenerationDetails.RoleLowercase
+            );
         }
 
         var tempList = cloner.Clone(weaponWithModsArray.Where(item => item.SlotId == ModMagazineSlotId));
@@ -506,6 +509,7 @@ public class BotWeaponGenerator(
     /// <summary>
     ///     Add ammo to the secure container.
     /// </summary>
+    /// <param name="botId">Id of bot we're adding ammo to</param>
     /// <param name="stackCount">How many stacks of ammo to add.</param>
     /// <param name="ammoTpl">Ammo type to add.</param>
     /// <param name="stackSize">Size of the ammo stack to add.</param>
@@ -606,9 +610,13 @@ public class BotWeaponGenerator(
                 );
             }
 
-            // Immediately returns, default ammo is guaranteed to be compatible
-            // it is not guaranteed to even have a default ammo
-            return weaponTemplate.Properties.DefAmmo.Value;
+            if (weaponTemplate.Properties.DefAmmo.HasValue)
+            {
+                return weaponTemplate.Properties.DefAmmo.Value;
+            }
+
+            // last ditch attempt to get default ammo tpl
+            return weaponTemplate.Properties.Chambers.FirstOrDefault().Properties.Filters.FirstOrDefault().Filter.FirstOrDefault();
         }
 
         // Get cartridges the weapons first chamber allow
@@ -708,9 +716,9 @@ public class BotWeaponGenerator(
 
         // Try to get cartridges from slots array first, if none found, try Cartridges array
         var cartridges =
-            magazineTemplate.Value.Properties.Slots.FirstOrDefault()?.Properties?.Filters.FirstOrDefault()?.Filter ?? magazineTemplate
+            magazineTemplate.Value.Properties.Slots.FirstOrDefault()?.Properties?.Filters?.FirstOrDefault()?.Filter ?? magazineTemplate
                 .Value.Properties.Cartridges.FirstOrDefault()
-                ?.Properties?.Filters.FirstOrDefault()
+                ?.Properties?.Filters?.FirstOrDefault()
                 ?.Filter;
 
         return cartridges ?? [];

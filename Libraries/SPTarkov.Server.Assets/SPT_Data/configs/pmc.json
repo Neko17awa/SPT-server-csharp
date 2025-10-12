@@ -163,7 +163,8 @@
     "67449b6c89d5e1ddc603f504",
     "6740987b89d5e1ddc603f4f0",
     "6707d0bdaab679420007e01a",
-    "66d9f7e7099cf6adcc07a369"
+    "66d9f7e7099cf6adcc07a369",
+    "6866665cdf54e1190902df55"
   ],
   "useDifficultyOverride": false,
   "difficulty": "AsOnline",
@@ -318,17 +319,17 @@
         {
           "min": 36,
           "max": 45,
-          "value": 450000
+          "value": 550000
         },
         {
           "min": 46,
           "max": 64,
-          "value": 750000
+          "value": 1000000
         },
         {
           "min": 65,
           "max": 100,
-          "value": 2500000
+          "value": 3000000
         }
       ],
       "locationMultiplier": {
@@ -541,7 +542,7 @@
       {
         "BossChance": 100,
         "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,1,1,1,1,1,2,2,2,2,3",
+        "BossEscortAmount": "0,0,0,1,1,1,1,1,2,2,2,2,3",
         "BossEscortDifficult": "normal",
         "BossEscortType": "pmcUSEC",
         "BossName": "pmcUSEC",
@@ -553,14 +554,14 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1.0,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
       {
         "BossChance": 100,
         "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,1,1,1,1,1,2,2",
+        "BossEscortAmount": "0,0,0,1,1,1,1,1,2",
         "BossEscortDifficult": "normal",
         "BossEscortType": "pmcUSEC",
         "BossName": "pmcUSEC",
@@ -572,14 +573,14 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1.0,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
       {
         "BossChance": 100,
         "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,1,1,1,1,1,2,2,2,2,3",
+        "BossEscortAmount": "0,0,0,1,1,1,1,1,2,2,2,2,3",
         "BossEscortDifficult": "normal",
         "BossEscortType": "pmcBEAR",
         "BossName": "pmcBEAR",
@@ -591,14 +592,14 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1.0,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
       {
         "BossChance": 100,
         "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,1,1,1,1,1,2,2",
+        "BossEscortAmount": "0,0,0,1,1,1,1,1,2,2",
         "BossEscortDifficult": "normal",
         "BossEscortType": "pmcBEAR",
         "BossName": "pmcBEAR",
@@ -610,14 +611,14 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1.0,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
       {
         "BossChance": 50.0,
         "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
+        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,3",
         "BossEscortDifficult": "normal",
         "BossEscortType": "pmcUSEC",
         "BossName": "pmcUSEC",
@@ -636,7 +637,7 @@
       {
         "BossChance": 50.0,
         "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
+        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,3",
         "BossEscortDifficult": "normal",
         "BossEscortType": "pmcBEAR",
         "BossName": "pmcBEAR",
@@ -653,9 +654,9 @@
         "TriggerName": ""
       },
       {
-        "BossChance": 80.0,
+        "BossChance": 75.0,
         "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
+        "BossEscortAmount": "0,0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
         "BossEscortDifficult": "normal",
         "BossEscortType": "pmcUSEC",
         "BossName": "pmcUSEC",
@@ -672,9 +673,47 @@
         "TriggerName": ""
       },
       {
-        "BossChance": 80.0,
+        "BossChance": 75.0,
         "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
+        "BossEscortAmount": "0,0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
+        "BossEscortDifficult": "normal",
+        "BossEscortType": "pmcBEAR",
+        "BossName": "pmcBEAR",
+        "BossPlayer": false,
+        "BossZone": "",
+        "IgnoreMaxBots": true,
+        "RandomTimeSpawn": false,
+        "SpawnMode": [
+          "pve"
+        ],
+        "Supports": null,
+        "Time": 450,
+        "TriggerId": "",
+        "TriggerName": ""
+      },
+      {
+        "BossChance": 70.0,
+        "BossDifficult": "normal",
+        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,3",
+        "BossEscortDifficult": "normal",
+        "BossEscortType": "pmcUSEC",
+        "BossName": "pmcUSEC",
+        "BossPlayer": false,
+        "BossZone": "",
+        "IgnoreMaxBots": true,
+        "RandomTimeSpawn": false,
+        "SpawnMode": [
+          "pve"
+        ],
+        "Supports": null,
+        "Time": 450,
+        "TriggerId": "",
+        "TriggerName": ""
+      },
+      {
+        "BossChance": 70.0,
+        "BossDifficult": "normal",
+        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,1,2,2,2,2,3",
         "BossEscortDifficult": "normal",
         "BossEscortType": "pmcBEAR",
         "BossName": "pmcBEAR",
@@ -693,45 +732,7 @@
       {
         "BossChance": 80.0,
         "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
-        "BossEscortDifficult": "normal",
-        "BossEscortType": "pmcUSEC",
-        "BossName": "pmcUSEC",
-        "BossPlayer": false,
-        "BossZone": "",
-        "IgnoreMaxBots": true,
-        "RandomTimeSpawn": false,
-        "SpawnMode": [
-          "pve"
-        ],
-        "Supports": null,
-        "Time": 450,
-        "TriggerId": "",
-        "TriggerName": ""
-      },
-      {
-        "BossChance": 80.0,
-        "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
-        "BossEscortDifficult": "normal",
-        "BossEscortType": "pmcBEAR",
-        "BossName": "pmcBEAR",
-        "BossPlayer": false,
-        "BossZone": "",
-        "IgnoreMaxBots": true,
-        "RandomTimeSpawn": false,
-        "SpawnMode": [
-          "pve"
-        ],
-        "Supports": null,
-        "Time": 450,
-        "TriggerId": "",
-        "TriggerName": ""
-      },
-      {
-        "BossChance": 80.0,
-        "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
+        "BossEscortAmount": "0,0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
         "BossEscortDifficult": "normal",
         "BossEscortType": "pmcUSEC",
         "BossName": "pmcUSEC",
@@ -750,7 +751,7 @@
       {
         "BossChance": 80.0,
         "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
+        "BossEscortAmount": "0,0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
         "BossEscortDifficult": "normal",
         "BossEscortType": "pmcBEAR",
         "BossName": "pmcBEAR",
@@ -769,7 +770,7 @@
       {
         "BossChance": 80.0,
         "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
+        "BossEscortAmount": "0,0,0,0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
         "BossEscortDifficult": "normal",
         "BossEscortType": "pmcUSEC",
         "BossName": "pmcUSEC",
@@ -788,7 +789,7 @@
       {
         "BossChance": 80.0,
         "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
+        "BossEscortAmount": "0,0,0,0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
         "BossEscortDifficult": "normal",
         "BossEscortType": "pmcBEAR",
         "BossName": "pmcBEAR",
@@ -821,7 +822,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1.0,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -840,7 +841,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1.0,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -859,7 +860,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1.0,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -878,14 +879,14 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1.0,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
       {
         "BossChance": 75.0,
         "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
+        "BossEscortAmount": "0,0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
         "BossEscortDifficult": "normal",
         "BossEscortType": "pmcUSEC",
         "BossName": "pmcUSEC",
@@ -904,7 +905,7 @@
       {
         "BossChance": 75.0,
         "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
+        "BossEscortAmount": "0,0,0,0,0,0,1,1,1,1,1,2,2,2,2,3",
         "BossEscortDifficult": "normal",
         "BossEscortType": "pmcBEAR",
         "BossName": "pmcBEAR",
@@ -923,7 +924,7 @@
       {
         "BossChance": 75.0,
         "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,2,2,2,2",
+        "BossEscortAmount": "0,0,0,0,0,0,1,1,1,1,1,2,2,2,2",
         "BossEscortDifficult": "normal",
         "BossEscortType": "pmcUSEC",
         "BossName": "pmcUSEC",
@@ -942,7 +943,7 @@
       {
         "BossChance": 75.0,
         "BossDifficult": "normal",
-        "BossEscortAmount": "0,0,0,0,0,1,1,1,1,1,2,2,2,2",
+        "BossEscortAmount": "0,0,0,0,0,0,1,1,1,1,1,2,2,2,2",
         "BossEscortDifficult": "normal",
         "BossEscortType": "pmcBEAR",
         "BossName": "pmcBEAR",
@@ -976,7 +977,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -996,7 +997,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -1016,7 +1017,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -1036,7 +1037,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -1258,7 +1259,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -1278,7 +1279,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -1298,7 +1299,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -1318,7 +1319,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -1540,7 +1541,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -1560,7 +1561,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -1580,7 +1581,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -1600,7 +1601,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -1822,7 +1823,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -1842,7 +1843,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -1862,7 +1863,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -1882,7 +1883,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -2104,7 +2105,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -2124,7 +2125,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -2144,7 +2145,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -2164,7 +2165,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -2386,7 +2387,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -2406,7 +2407,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -2426,7 +2427,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -2446,7 +2447,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -2668,7 +2669,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -2688,7 +2689,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -2910,7 +2911,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -2930,7 +2931,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -2950,7 +2951,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -2970,7 +2971,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -3192,7 +3193,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -3212,7 +3213,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -3232,7 +3233,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -3252,7 +3253,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -3434,7 +3435,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -3454,7 +3455,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -3474,7 +3475,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -3494,7 +3495,7 @@
           "pve"
         ],
         "Supports": null,
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -3720,7 +3721,7 @@
           "pve"
         ],
         "Supports": [],
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -3744,7 +3745,7 @@
           "pve"
         ],
         "Supports": [],
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -3768,7 +3769,7 @@
           "pve"
         ],
         "Supports": [],
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },
@@ -3792,7 +3793,7 @@
           "pve"
         ],
         "Supports": [],
-        "Time": -1,
+        "Time": 30.0,
         "TriggerId": "",
         "TriggerName": ""
       },

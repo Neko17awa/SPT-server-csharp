@@ -27,10 +27,9 @@ public class BotWeaponGeneratorHelper(
     {
         var randomizedMagazineCount = Math.Max(GetRandomizedMagazineCount(magCounts), 1); // Never return lower than 1 to prevent a multiplication by 0
         var parentItem = itemHelper.GetItem(magTemplate.Parent).Value;
-
         if (parentItem is null)
         {
-            logger.Error("Parent item is null when trying to get randomized bullet count");
+            logger.Error($"Parent item null when trying to get randomized bullet count for: {magTemplate.Id}");
             return null;
         }
 

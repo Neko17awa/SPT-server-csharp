@@ -1,5 +1,4 @@
 using System.Collections.Frozen;
-using System.Text.Json;
 using SPTarkov.Common.Extensions;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Extensions;
@@ -468,6 +467,16 @@ public class SeasonalEventService(
 
         AddPumpkinsToScavBackpacks();
         AdjustTraderIcons(eventType.Type);
+
+        if (databaseService.GetBots().Types.TryGetValue("bear", out var bear))
+        {
+            bear.BotAppearance.Head[new MongoId("6644d2da35d958070c02642c")] = 30;
+        }
+
+        if (databaseService.GetBots().Types.TryGetValue("usec", out var usec))
+        {
+            usec.BotAppearance.Head[new MongoId("6644d2da35d958070c02642c")] = 30;
+        }
     }
 
     protected void ApplyChristmasEvent(SeasonalEvent eventType, Config globalConfig)
@@ -479,6 +488,10 @@ public class SeasonalEventService(
             globalConfig.EventType = globalConfig.EventType.Where(x => x != EventType.None).ToList();
             globalConfig.EventType.Add(EventType.Christmas);
         }
+
+        // Related to the 'rudans' event
+        var botData = databaseService.GetBots();
+        botData.Core.ActivePatrolGeneratorEvent = true;
 
         AddEventGearToBots(eventType.Type);
         AddEventLootToBots(eventType.Type);
@@ -731,14 +744,14 @@ public class SeasonalEventService(
     {
         // Flag zombies as being enabled
         var botData = databaseService.GetBots();
-        botData.Core["ACTIVE_HALLOWEEN_ZOMBIES_EVENT"] = JsonDocument.Parse("true").RootElement.Clone();
+        botData.Core.ActiveHalloweenZombiesEvent = true;
 
         var globals = databaseService.GetGlobals();
         var infectionHalloween = globals.Configuration.SeasonActivity.InfectionHalloween;
         infectionHalloween.DisplayUIEnabled = true;
         infectionHalloween.Enabled = true;
 
-        var globalInfectionDict = globals.LocationInfection.GetAllPropertiesAsDictionary();
+        var globalInfectionDict = globals.LocationInfection;
         foreach (var (locationId, infectionPercentage) in zombieSettings.MapInfectionAmount)
         {
             // calculate a random value unless the rate is 100
@@ -758,7 +771,7 @@ public class SeasonalEventService(
             }
 
             // Globals data needs value updated too
-            globalInfectionDict[locationId] = randomInfectionPercentage;
+            globalInfectionDict[locationId] = Convert.ToInt32(randomInfectionPercentage);
         }
 
         foreach (var locationId in zombieSettings.DisableBosses)

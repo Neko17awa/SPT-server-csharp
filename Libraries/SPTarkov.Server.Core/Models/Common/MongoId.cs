@@ -89,7 +89,7 @@ public readonly struct MongoId : IEquatable<MongoId>, IComparable<MongoId>
 
         if (hex.Length != 24)
         {
-            throw new ArgumentException("ObjectId must be a 24-character hex string.", nameof(hex));
+            throw new ArgumentException("ObjectId must be a 24-character hex string.", hex);
         }
 
         Span<byte> bytes = stackalloc byte[12];

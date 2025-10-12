@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
-using SPTarkov.Server.Core.Models.Common;
+﻿using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Eft.ItemEvent;
+using SPTarkov.Server.Core.Models.Eft.Ragfair;
 using SPTarkov.Server.Core.Models.Enums;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Models.Enums.Hideout;
 
 namespace SPTarkov.Server.Core.Extensions;
 
@@ -68,6 +68,30 @@ public static class ProfileExtensions
     public static CommonSkill? GetSkillFromProfile(this PmcData profile, SkillTypes skill)
     {
         return profile?.Skills?.Common?.FirstOrDefault(s => s.Id == skill);
+    }
+
+    /// <summary>
+    ///     Get a multiplier based on player's skill level and value per level
+    /// </summary>
+    /// <param name="pmcData">Player profile</param>
+    /// <param name="skill">Player skill from profile</param>
+    /// <param name="valuePerLevel">Value from globals.config.SkillsSettings - `PerLevel`</param>
+    /// <returns>Multiplier from 0 to 1</returns>
+    public static double GetSkillBonusMultipliedBySkillLevel(this PmcData pmcData, SkillTypes skill, double valuePerLevel)
+    {
+        var profileSkill = pmcData.GetSkillFromProfile(skill);
+        if (profileSkill is null || profileSkill.Progress == 0)
+        {
+            return 0;
+        }
+
+        // If the level is 51 we need to round it at 50 so on elite you dont get 25.5%
+        // at level 1 you already get 0.5%, so it goes up until level 50. For some reason the wiki
+        // says that it caps at level 51 with 25% but as per dump data that is incorrect apparently
+        var roundedLevel = Math.Floor(profileSkill.Progress / 100);
+        roundedLevel = roundedLevel.Approx(51d) ? roundedLevel - 1 : roundedLevel;
+
+        return roundedLevel * valuePerLevel / 100;
     }
 
     /// <summary>
@@ -288,5 +312,29 @@ public static class ProfileExtensions
                 insuredItems.RemoveAt(insuredItemIndex);
             }
         }
+    }
+
+    /// <summary>
+    ///     Does Player have necessary trader loyalty to purchase flea offer
+    /// </summary>
+    /// <param name="pmcData">Player profile</param>
+    /// <param name="fleaOffer">Flea offer being bought</param>
+    /// <returns>True if player can buy offer</returns>
+    public static bool ProfileMeetsTraderLoyaltyLevelToBuyOffer(this PmcData pmcData, RagfairOffer fleaOffer)
+    {
+        if (fleaOffer.LoyaltyLevel == 0)
+        {
+            // No requirement, always passes
+            return true;
+        }
+
+        if (pmcData.TradersInfo.TryGetValue(fleaOffer.User.Id, out var traderInfo))
+        {
+            // Trader exists in profile ,do loyalty level check
+            return traderInfo.LoyaltyLevel >= fleaOffer.LoyaltyLevel;
+        }
+
+        // No trader data on player profile, fail check
+        return false;
     }
 }

@@ -985,7 +985,6 @@ public class RagfairOfferHelper(
     /// <returns>True if has condition</returns>
     protected bool IsConditionItem(Item item)
     {
-        // thanks typescript, undefined assertion is not returnable since it
         // tries to return a multi-type object
         if (item.Upd is null)
         {

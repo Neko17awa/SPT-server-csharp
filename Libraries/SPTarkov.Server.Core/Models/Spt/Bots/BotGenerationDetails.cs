@@ -18,6 +18,12 @@ public record BotGenerationDetails
     public string Role { get; set; }
 
     /// <summary>
+    ///     assault/pmcBot etc
+    /// </summary>
+    [JsonPropertyName("BotRoleLowercase")]
+    public string RoleLowercase { get; set; }
+
+    /// <summary>
     ///     Side of bot
     /// </summary>
     [JsonPropertyName("side")]
@@ -85,4 +91,14 @@ public record BotGenerationDetails
     /// </summary>
     [JsonPropertyName("clearBotContainerCacheAfterGeneration")]
     public bool ClearBotContainerCacheAfterGeneration { get; set; } = true;
+
+    /// <summary>
+    /// Level the bot will have once generated
+    /// </summary>
+    public int BotLevel { get; set; }
+
+    /// <summary>
+    /// Version of the game bot will use - Only apples to PMCs
+    /// </summary>
+    public string GameVersion { get; set; }
 }

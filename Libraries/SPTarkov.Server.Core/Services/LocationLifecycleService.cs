@@ -65,6 +65,7 @@ public class LocationLifecycleService(
     /// Check player type for pmc or scav
     /// </summary>
     /// <param name="playerSide">string</param>
+    /// <param name="sideCheck">What to check the bot against, default = PMC</param>
     /// <returns>bool</returns>
     protected internal bool IsSide(string playerSide, string sideCheck = Pmc)
     {
@@ -159,7 +160,12 @@ public class LocationLifecycleService(
         {
             return;
         }
-        logger.Debug("Wiping player inventory on raid start to prevent alt-f4");
+
+        if (logger.IsLogEnabled(LogLevel.Debug))
+        {
+            logger.Debug("Wiping player inventory on raid start to prevent alt-f4");
+        }
+
         inRaidHelper.DeleteInventory(pmcData, sessionId);
     }
 

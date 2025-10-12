@@ -6,7 +6,9 @@ using SPTarkov.Server.Core.Models.Eft.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Eft.Ragfair;
 using SPTarkov.Server.Core.Models.Enums;
+using SPTarkov.Server.Core.Models.Spt.Config;
 using SPTarkov.Server.Core.Models.Utils;
+using SPTarkov.Server.Core.Servers;
 using SPTarkov.Server.Core.Utils.Cloners;
 using LogLevel = SPTarkov.Server.Core.Models.Spt.Logging.LogLevel;
 
@@ -18,10 +20,13 @@ public class RagfairTaxService(
     DatabaseService databaseService,
     RagfairPriceService ragfairPriceService,
     ItemHelper itemHelper,
+    ConfigServer configServer,
     ICloner cloner
 )
 {
     protected readonly Dictionary<MongoId, StorePlayerOfferTaxAmountRequestData> _playerOfferTaxCache = new();
+
+    protected readonly RagfairConfig RagfairConfig = configServer.GetConfig<RagfairConfig>();
 
     public void StoreClientOfferTaxValue(MongoId sessionId, StorePlayerOfferTaxAmountRequestData offer)
     {
@@ -111,6 +116,11 @@ public class RagfairTaxService(
         if (logger.IsLogEnabled(LogLevel.Debug))
         {
             logger.Debug($"Tax Calculated to be: {taxValue}");
+        }
+
+        if (RagfairConfig.OfferListingTaxMultiplier != -1)
+        {
+            taxValue *= RagfairConfig.OfferListingTaxMultiplier;
         }
 
         return taxValue;

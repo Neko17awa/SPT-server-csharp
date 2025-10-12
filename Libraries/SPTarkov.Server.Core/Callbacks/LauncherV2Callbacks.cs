@@ -1,6 +1,5 @@
 ﻿using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Controllers;
-using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Launcher;
 using SPTarkov.Server.Core.Models.Spt.Launcher;
 using SPTarkov.Server.Core.Utils;
@@ -40,17 +39,6 @@ public class LauncherV2Callbacks(
         );
     }
 
-    public async ValueTask<string> PasswordChange(ChangeRequestData info)
-    {
-        return httpResponseUtil.NoBody(
-            new LauncherV2PasswordChangeResponse
-            {
-                Response = await launcherV2Controller.PasswordChange(info),
-                Profiles = profileController.GetMiniProfiles(),
-            }
-        );
-    }
-
     public ValueTask<string> Remove(LoginRequestData info)
     {
         return new ValueTask<string>(
@@ -67,16 +55,7 @@ public class LauncherV2Callbacks(
     public ValueTask<string> CompatibleVersion()
     {
         return new ValueTask<string>(
-            httpResponseUtil.NoBody(
-                new LauncherV2VersionResponse
-                {
-                    Response = new LauncherV2CompatibleVersion
-                    {
-                        SptVersion = launcherV2Controller.SptVersion(),
-                        EftVersion = launcherV2Controller.EftVersion(),
-                    },
-                }
-            )
+            httpResponseUtil.NoBody(new LauncherV2VersionResponse { Response = launcherV2Controller.SptVersion() })
         );
     }
 
@@ -92,10 +71,10 @@ public class LauncherV2Callbacks(
         );
     }
 
-    public ValueTask<string> Profile(MongoId sessionId)
+    public ValueTask<string> Profile(LoginRequestData sessionId)
     {
         return new ValueTask<string>(
-            httpResponseUtil.NoBody(new LauncherV2ProfileResponse { Response = launcherV2Controller.GetProfile(sessionId) })
+            httpResponseUtil.NoBody(new LauncherV2ProfileResponse { Response = launcherV2Controller.GetMiniProfileFromUsername(sessionId) })
         );
     }
 }

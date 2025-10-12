@@ -3,6 +3,7 @@ using SPTarkov.Server.Core.Generators;
 using SPTarkov.Server.Core.Helpers;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Profile;
+using SPTarkov.Server.Core.Models.Spt.Bots;
 using SPTarkov.Server.Core.Servers;
 using SPTarkov.Server.Core.Services;
 
@@ -45,6 +46,13 @@ public class BotWeaponGeneratorTests
         }
 
         var weaponParentId = new MongoId();
+        var botGen = new BotGenerationDetails
+        {
+            Role = "pmcUSEC",
+            RoleLowercase = "pmcusec",
+            BotLevel = 69,
+            IsPmc = true,
+        };
 
         for (var i = 0; i < 100; i++)
         {
@@ -55,9 +63,7 @@ public class BotWeaponGeneratorTests
                 botTemplateInventory,
                 weaponParentId,
                 weaponModChances,
-                "pmcUSEC",
-                true,
-                69
+                botGen
             );
 
             var itemSize = _inventoryHelper.GetItemSize(weaponTpl, result.Weapon[0].Id, result.Weapon);

@@ -366,6 +366,18 @@
         ],
         "craftTimeSeconds": 39960,
         "repeatable": false
+      },
+      {
+        "reward": [
+          "686666db646d47fec3018925"
+        ],
+        "requiredItems": [
+          "6866665cdf54e1190902df55",
+          "5d1b371186f774253763a656",
+          "56742c2e4bdc2d95058b456d"
+        ],
+        "craftTimeSeconds": 66,
+        "repeatable": true
       }
     ],
     "directRewardStackSize": {
@@ -626,5 +638,10 @@
         }
       ]
     }
+  ],
+  "hideoutLootCrateCraftIdsToUnlockInHideout": [
+    "66582be04de4820934746cea",
+    "6745925da9c9adf0450d5bca",
+    "67449c79268737ef6908d636"
   ]
 }

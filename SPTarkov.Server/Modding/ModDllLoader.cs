@@ -113,7 +113,14 @@ public class ModDllLoader
 
                 if (modMetadata != null)
                 {
-                    result = (AbstractModMetadata)Activator.CreateInstance(modMetadata)!;
+                    try
+                    {
+                        result = (AbstractModMetadata)Activator.CreateInstance(modMetadata)!;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"Failed to load mod metadata for: {Path.GetFullPath(path)} \n{ex}");
+                    }
                 }
             }
         }

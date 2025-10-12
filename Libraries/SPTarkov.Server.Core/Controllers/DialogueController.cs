@@ -121,7 +121,7 @@ public class DialogueController(
         foreach (var bot in DialogueChatBots)
         {
             var botData = bot.GetChatBot();
-            if (chatBotConfig.EnabledBots.ContainsKey(botData.Id))
+            if (chatBotConfig.EnabledBots.GetValueOrDefault(botData.Id, false))
             {
                 activeBots.Add(botData);
             }

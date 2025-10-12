@@ -20,12 +20,30 @@ using SPTarkov.Server.Core.Utils.Logger;
 using SPTarkov.Server.Logger;
 using SPTarkov.Server.Modding;
 using SPTarkov.Server.Services;
+using SPTarkov.Server.Web;
 
 namespace SPTarkov.Server;
 
 public static class Program
 {
     public static async Task Main(string[] args)
+    {
+        try
+        {
+            await StartServer(args);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("=========================================================================================================");
+            Console.WriteLine("The server has unexpectedly stopped, please check your log files and reach out to #spt-support in discord");
+            Console.WriteLine(e);
+            Console.WriteLine("=========================================================================================================");
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadLine();
+        }
+    }
+
+    public static async Task StartServer(string[] args)
     {
         Console.OutputEncoding = Encoding.UTF8;
 
@@ -41,7 +59,7 @@ public static class Program
         ProgramStatics.Initialize();
 
         // Create web builder and logger
-        var builder = CreateNewHostBuilder(args);
+        var builder = CreateNewHostBuilder();
 
         var diHandler = new DependencyInjectionHandler(builder.Services);
         // register SPT components
@@ -64,6 +82,8 @@ public static class Program
         }
         diHandler.InjectAll();
 
+        builder.InitializeSptBlazor(loadedMods);
+
         builder.Services.AddSingleton(builder);
         builder.Services.AddSingleton<IReadOnlyList<SptMod>>(loadedMods);
         // Configure Kestrel options
@@ -81,9 +101,14 @@ public static class Program
         try
         {
             // Handle edge cases where reverse proxies might pass X-Forwarded-For, use this as the actual IP address
-            app.UseForwardedHeaders(
-                new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto }
-            );
+            var forwardedHeadersOptions = new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+                ForwardLimit = null,
+            };
+            forwardedHeadersOptions.KnownNetworks.Clear();
+            forwardedHeadersOptions.KnownProxies.Clear();
+            app.UseForwardedHeaders(forwardedHeadersOptions);
 
             SetConsoleOutputMode();
 
@@ -93,8 +118,8 @@ public static class Program
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
             serverExceptionLogger.LogCritical(ex, "Critical exception, stopping server...");
+            throw;
         }
         finally
         {
@@ -111,12 +136,17 @@ public static class Program
                 KeepAliveInterval = TimeSpan.FromSeconds(60),
             }
         );
+
+        app.UseMiddleware<SptLoggerMiddleware>();
+
         app.Use(
-            async (HttpContext context, RequestDelegate _) =>
+            async (HttpContext context, RequestDelegate next) =>
             {
-                await context.RequestServices.GetRequiredService<HttpServer>().HandleRequest(context);
+                await context.RequestServices.GetRequiredService<HttpServer>().HandleRequest(context, next);
             }
         );
+
+        app.UseSptBlazor();
     }
 
     private static void ConfigureKestrel(WebApplicationBuilder builder)
@@ -159,9 +189,9 @@ public static class Program
         );
     }
 
-    private static WebApplicationBuilder CreateNewHostBuilder(string[]? args = null)
+    private static WebApplicationBuilder CreateNewHostBuilder()
     {
-        var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(new WebApplicationOptions { WebRootPath = "./SPT_Data/wwwroot" });
         builder.Logging.ClearProviders();
         builder.Configuration.SetBasePath(Directory.GetCurrentDirectory());
         builder.Host.UseSptLogger();

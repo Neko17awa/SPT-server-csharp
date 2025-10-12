@@ -8,17 +8,18 @@ namespace SPTarkov.Server.Core.Services;
 [Injectable(InjectionType.Singleton)]
 public class RagfairRequiredItemsService(RagfairOfferService ragfairOfferService, PaymentHelper paymentHelper)
 {
-    private bool _cacheIsStale = true;
+    private readonly Lock _createCacheLock = new();
+    private volatile bool _cacheIsStale = true;
 
     /// <summary>
-    /// Key = tpl
+    /// Key = tpl, Value = offerIds
     /// </summary>
-    protected readonly ConcurrentDictionary<MongoId, HashSet<MongoId>> RequiredItemsCache = new();
+    private ConcurrentDictionary<MongoId, HashSet<MongoId>> _requiredItemsCache = new();
 
     /// <summary>
     /// Empty hashset to be returned when no keys found by GetRequiredOffersById (reduces memory allocations)
     /// </summary>
-    protected readonly IReadOnlySet<MongoId> EmptyOfferIdSet = new HashSet<MongoId>();
+    private readonly IReadOnlySet<MongoId> _emptyOfferIdSet = new HashSet<MongoId>();
 
     /// <summary>
     /// Get the offerId of offers that require the supplied tpl
@@ -29,10 +30,18 @@ public class RagfairRequiredItemsService(RagfairOfferService ragfairOfferService
     {
         if (_cacheIsStale)
         {
-            BuildRequiredItemTable();
+            // Lock to prevent 2 threads building table
+            lock (_createCacheLock)
+            {
+                // Second check in the event another thread just built table
+                if (_cacheIsStale)
+                {
+                    BuildRequiredItemTable();
+                }
+            }
         }
 
-        return RequiredItemsCache.TryGetValue(tpl, out var offerIds) ? offerIds : EmptyOfferIdSet;
+        return _requiredItemsCache.TryGetValue(tpl, out var offerIds) ? offerIds : _emptyOfferIdSet;
     }
 
     /// <summary>
@@ -40,11 +49,16 @@ public class RagfairRequiredItemsService(RagfairOfferService ragfairOfferService
     /// </summary>
     public void BuildRequiredItemTable()
     {
-        Clear();
+        ConcurrentDictionary<MongoId, HashSet<MongoId>> newCache = new();
 
         foreach (var offer in ragfairOfferService.GetOffers())
         {
-            foreach (var requirement in offer.Requirements ?? [])
+            if (offer.Requirements is null)
+            {
+                continue;
+            }
+
+            foreach (var requirement in offer.Requirements)
             {
                 // Skip offers for currency, we only need barter offers as this cache is used by `GetOffersThatRequireItem`
                 if (paymentHelper.IsMoneyTpl(requirement.TemplateId))
@@ -53,29 +67,24 @@ public class RagfairRequiredItemsService(RagfairOfferService ragfairOfferService
                 }
 
                 // Ensure cache has Hashset init for this tpl
-                var offerIds = RequiredItemsCache.GetOrAdd(requirement.TemplateId, _ => []);
+                var offerIds = newCache.GetOrAdd(requirement.TemplateId, _ => []);
 
                 // Add offer id against the tpl key
                 offerIds.Add(offer.Id);
             }
         }
 
+        // Replace cache in one go
+        _requiredItemsCache = newCache;
+
         // Cache is now fresh
         _cacheIsStale = false;
     }
 
     /// <summary>
-    /// Clear all data from cache
-    /// </summary>
-    public void Clear()
-    {
-        RequiredItemsCache.Clear();
-    }
-
-    /// <summary>
     /// Flag the cache as stale
     /// </summary>
-    public void CacheIsStale()
+    public void InvalidateCache()
     {
         _cacheIsStale = true;
     }

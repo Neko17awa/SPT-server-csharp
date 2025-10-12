@@ -59,7 +59,6 @@ public class ProfileController(
             {
                 Username = profile.ProfileInfo?.Username ?? string.Empty,
                 Nickname = "unknown",
-                HasPassword = profile.ProfileInfo?.Password != string.Empty,
                 Side = "unknown",
                 CurrentLevel = 0,
                 CurrentExperience = 0,
@@ -68,6 +67,7 @@ public class ProfileController(
                 MaxLevel = maxLvl,
                 Edition = profile.ProfileInfo?.Edition ?? string.Empty,
                 ProfileId = profile.ProfileInfo?.ProfileId ?? string.Empty,
+                InvalidOrUnloadableProfile = profile.ProfileInfo?.InvalidOrUnloadableProfile,
                 SptData = profileHelper.GetDefaultSptDataObject(),
             };
         }
@@ -76,7 +76,6 @@ public class ProfileController(
         {
             Username = profile.ProfileInfo?.Username,
             Nickname = pmc.Info.Nickname,
-            HasPassword = profile.ProfileInfo?.Password != "",
             Side = pmc.Info.Side,
             CurrentLevel = pmc.Info.Level,
             CurrentExperience = pmc.Info.Experience ?? 0,
@@ -85,6 +84,7 @@ public class ProfileController(
             MaxLevel = maxLvl,
             Edition = profile.ProfileInfo?.Edition ?? string.Empty,
             ProfileId = profile.ProfileInfo?.ProfileId ?? string.Empty,
+            InvalidOrUnloadableProfile = profile.ProfileInfo?.InvalidOrUnloadableProfile,
             SptData = profile.SptData,
         };
     }

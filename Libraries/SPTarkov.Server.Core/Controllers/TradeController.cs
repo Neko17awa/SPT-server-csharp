@@ -87,10 +87,14 @@ public class TradeController(
 
         foreach (var offer in request.Offers)
         {
-            var fleaOffer = ragfairServer.GetOffer(offer.Id);
+            var fleaOffer = ragfairServer.GetOffer(new MongoId(offer.Id));
             if (fleaOffer is null)
             {
-                return httpResponseUtil.AppendErrorToOutput(output, $"Offer with ID {offer.Id} not found", BackendErrorCodes.OfferNotFound);
+                return httpResponseUtil.AppendErrorToOutput(
+                    output,
+                    $"Offer with ID: {offer.Id} not found",
+                    BackendErrorCodes.OfferNotFound
+                );
             }
 
             if (offer.Count == 0)
@@ -138,7 +142,7 @@ public class TradeController(
     )
     {
         // Skip buying items when player doesn't have needed loyalty
-        if (!PlayerMeetsTraderLoyaltyLevelToBuyOffer(fleaOffer, pmcData))
+        if (!pmcData.ProfileMeetsTraderLoyaltyLevelToBuyOffer(fleaOffer))
         {
             var errorMessage =
                 $"Unable to buy item: {fleaOffer.Items[0].Template} from trader: {fleaOffer.User.Id} as loyalty level too low, skipping";
@@ -156,7 +160,7 @@ public class TradeController(
         var buyData = new ProcessBuyTradeRequestData
         {
             Action = "TradingConfirm",
-            Type = "buy_from_ragfair",
+            Type = "buy_from_ragfair_trader",
             TransactionId = fleaOffer.User.Id,
             ItemId = fleaOffer.Root,
             Count = requestOffer.Count,
@@ -188,8 +192,8 @@ public class TradeController(
         var buyData = new ProcessBuyTradeRequestData
         {
             Action = "TradingConfirm",
-            Type = "buy_from_ragfair",
-            TransactionId = "ragfair",
+            Type = "buy_from_ragfair_pmc",
+            TransactionId = fleaOffer.User.Id,
             ItemId = fleaOffer.Id, // Store ragfair offerId in buyRequestData.item_id
             Count = requestOffer.Count,
             SchemeId = 0,
@@ -217,30 +221,6 @@ public class TradeController(
 
         // Remove/lower offer quantity of item purchased from PMC flea offer
         ragfairServer.ReduceOfferQuantity(fleaOffer.Id, requestOffer.Count ?? 0);
-    }
-
-    /// <summary>
-    ///     Does Player have necessary trader loyalty to purchase flea offer
-    /// </summary>
-    /// <param name="fleaOffer">Flea offer being bought</param>
-    /// <param name="pmcData">Player profile</param>
-    /// <returns>True if player can buy offer</returns>
-    protected bool PlayerMeetsTraderLoyaltyLevelToBuyOffer(RagfairOffer fleaOffer, PmcData pmcData)
-    {
-        if (fleaOffer.LoyaltyLevel == 0)
-        {
-            // No requirement, always passes
-            return true;
-        }
-
-        if (pmcData.TradersInfo.TryGetValue(fleaOffer.User.Id, out var traderInfo))
-        {
-            // Trader exists in profile ,do loyalty level check
-            return traderInfo.LoyaltyLevel >= fleaOffer.LoyaltyLevel;
-        }
-
-        // No trader data on player profile, fail check
-        return false;
     }
 
     /// <summary>

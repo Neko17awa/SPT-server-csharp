@@ -1,6 +1,9 @@
-﻿namespace SPTarkov.DI.Annotations;
+﻿using JetBrains.Annotations;
+
+namespace SPTarkov.DI.Annotations;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+[MeansImplicitUse]
 public class Injectable(InjectionType injectionType = InjectionType.Scoped, Type? typeOverride = null, int typePriority = int.MaxValue)
     : Attribute
 {

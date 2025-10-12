@@ -79,10 +79,10 @@ public record ContainerData
 public record StaticLootDetails
 {
     [JsonPropertyName("itemcountDistribution")]
-    public ItemCountDistribution[] ItemCountDistribution { get; set; }
+    public IEnumerable<ItemCountDistribution> ItemCountDistribution { get; set; }
 
     [JsonPropertyName("itemDistribution")]
-    public ItemDistribution[] ItemDistribution { get; set; }
+    public IEnumerable<ItemDistribution> ItemDistribution { get; set; }
 }
 
 public record ItemCountDistribution

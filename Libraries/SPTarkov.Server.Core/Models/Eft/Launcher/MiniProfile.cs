@@ -34,9 +34,9 @@ public record MiniProfile
     [JsonPropertyName("profileId")]
     public string? ProfileId { get; set; }
 
+    [JsonPropertyName("invalidOrUnloadableProfile")]
+    public bool? InvalidOrUnloadableProfile { get; set; }
+
     [JsonPropertyName("sptData")]
     public Profile.Spt? SptData { get; set; }
-
-    [JsonPropertyName("hasPassword")]
-    public bool? HasPassword { get; set; }
 }

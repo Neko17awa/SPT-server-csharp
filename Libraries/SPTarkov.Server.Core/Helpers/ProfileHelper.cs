@@ -714,4 +714,24 @@ public class ProfileHelper(
             ? matchingProfileTemplate.Bear
             : matchingProfileTemplate.Usec;
     }
+
+    /// <summary>
+    /// Look up a key inside the `CustomFlags` property from a profile template
+    /// </summary>
+    /// <param name="accountEdition">Edition of profile desired, e.g. "Standard"</param>
+    /// <param name="flagKey">key stored in CustomFlags dictionary</param>
+    /// <returns></returns>
+    public bool GetProfileTemplateFlagValue(string accountEdition, string flagKey)
+    {
+        var profileTemplates = databaseService.GetProfileTemplates();
+
+        // Get matching profile 'type' e.g. 'standard'
+        if (!profileTemplates.TryGetValue(accountEdition, out var matchingProfileTemplate))
+        {
+            logger.Error($"Unable to find profile template for account edition: {accountEdition}");
+            return false;
+        }
+
+        return matchingProfileTemplate.CustomFlags.GetValueOrDefault(flagKey, false);
+    }
 }

@@ -343,7 +343,20 @@
         "newPriceHandbookMultiplier": 11
       }
     },
-    "useTraderPriceForOffersIfHigher": true
+    "useTraderPriceForOffersIfHigher": true,
+    "generateBaseFleaPrices": {
+      "useHandbookPrice": true,
+      "priceMultiplier": 1.5,
+      "itemTplMultiplierOverride": {
+        "5780cf7f2459777de4559322": 1.8
+      },
+      "itemTypeMultiplierOverride": {
+        "5c164d2286f774194c5e69fa": 2.5
+      },
+      "preventPriceBeingBelowTraderBuyPrice": true,
+      "useHideoutCraftMultiplier": true,
+      "hideoutCraftMultiplier": 0.8
+    }
   },
   "runIntervalSeconds": 8,
   "runIntervalValues": {
@@ -449,5 +462,6 @@
     "5ac3b934156ae10c4430e83c": true,
     "5c0647fdd443bc2504c2d371": true,
     "6617beeaa9cfa777ca915b7c": true
-  }
+  },
+  "offerListingTaxMultiplier": -1
 }

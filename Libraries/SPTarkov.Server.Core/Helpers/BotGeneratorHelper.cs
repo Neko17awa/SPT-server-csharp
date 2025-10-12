@@ -1,6 +1,7 @@
 using System.Collections.Frozen;
 using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.Constants;
+using SPTarkov.Server.Core.Extensions;
 using SPTarkov.Server.Core.Models.Common;
 using SPTarkov.Server.Core.Models.Eft.Common.Tables;
 using SPTarkov.Server.Core.Models.Enums;
@@ -47,19 +48,21 @@ public class BotGeneratorHelper(
     /// </summary>
     /// <param name="itemTemplate">Item extra properties are being generated for</param>
     /// <param name="botRole">Used by weapons to randomize the durability values. Null for non-equipped items</param>
+    /// <param name="forceStackObjectsCount">Force property on item</param>
     /// <returns>Item Upd object with extra properties</returns>
-    public Upd GenerateExtraPropertiesForItem(TemplateItem? itemTemplate, string? botRole = null)
+    public Upd? GenerateExtraPropertiesForItem(TemplateItem? itemTemplate, string? botRole = null, bool forceStackObjectsCount = false)
     {
         // Get raid settings, if no raid, default to day
         var raidSettings = profileActivityService.GetFirstProfileActivityRaidData()?.RaidConfiguration;
 
+        // BotRole property exists, we have specific bot randomisation values to make use of
         RandomisedResourceDetails? randomisationSettings = null;
         if (botRole is not null)
         {
             BotConfig.LootItemResourceRandomization.TryGetValue(botRole, out randomisationSettings);
         }
 
-        Upd itemProperties = new();
+        Upd itemUpd = new();
         var hasProperties = false;
 
         if (itemTemplate?.Properties?.MaxDurability is not null && itemTemplate.Properties.MaxDurability > 0)
@@ -67,40 +70,41 @@ public class BotGeneratorHelper(
             if (itemTemplate.Properties.WeapClass is not null)
             {
                 // Is weapon
-                itemProperties.Repairable = GenerateWeaponRepairableProperties(itemTemplate, botRole);
+                itemUpd.Repairable = GenerateWeaponRepairableProperties(itemTemplate, botRole);
                 hasProperties = true;
             }
             else if (itemTemplate.Properties.ArmorClass is not null)
             {
                 // Is armor
-                itemProperties.Repairable = GenerateArmorRepairableProperties(itemTemplate, botRole);
+                itemUpd.Repairable = GenerateArmorRepairableProperties(itemTemplate, botRole);
                 hasProperties = true;
             }
         }
 
         if (itemTemplate?.Properties?.HasHinge ?? false)
         {
-            itemProperties.Togglable = new UpdTogglable { On = true };
+            itemUpd.Togglable = new UpdTogglable { On = true };
             hasProperties = true;
         }
 
         if (itemTemplate?.Properties?.Foldable ?? false)
         {
-            itemProperties.Foldable = new UpdFoldable { Folded = false };
+            itemUpd.Foldable = new UpdFoldable { Folded = false };
             hasProperties = true;
         }
 
         if (itemTemplate?.Properties?.WeapFireType?.Count == 0)
         {
-            itemProperties.FireMode = itemTemplate.Properties.WeapFireType.Contains("fullauto")
+            itemUpd.FireMode = itemTemplate.Properties.WeapFireType.Contains("fullauto")
                 ? new UpdFireMode { FireMode = "fullauto" }
                 : new UpdFireMode { FireMode = randomUtil.GetArrayValue(itemTemplate.Properties.WeapFireType) };
             hasProperties = true;
         }
 
-        if (itemTemplate?.Properties?.MaxHpResource is not null)
+        // Must have value + not be 0 (e.g. Esmarch tourniquet) as they're single use
+        if (itemTemplate?.Properties?.MaxHpResource is not null && itemTemplate.Properties.MaxHpResource != 0)
         {
-            itemProperties.MedKit = new UpdMedKit
+            itemUpd.MedKit = new UpdMedKit
             {
                 HpResource = GetRandomizedResourceValue(itemTemplate.Properties.MaxHpResource ?? 0, randomisationSettings?.Meds),
             };
@@ -109,7 +113,7 @@ public class BotGeneratorHelper(
 
         if (itemTemplate?.Properties?.MaxResource is not null && itemTemplate.Properties?.FoodUseTime is not null)
         {
-            itemProperties.FoodDrink = new UpdFoodDrink
+            itemUpd.FoodDrink = new UpdFoodDrink
             {
                 HpPercent = GetRandomizedResourceValue(itemTemplate.Properties.MaxResource ?? 0, randomisationSettings?.Food),
             };
@@ -124,7 +128,7 @@ public class BotGeneratorHelper(
                     ? equipmentSettings?.LightIsActiveNightChancePercent ?? 50
                     : equipmentSettings?.LightIsActiveDayChancePercent ?? 25;
 
-            itemProperties.Light = new UpdLight { IsActive = randomUtil.GetChance100(lightLaserActiveChance), SelectedMode = 0 };
+            itemUpd.Light = new UpdLight { IsActive = randomUtil.GetChance100(lightLaserActiveChance), SelectedMode = 0 };
             hasProperties = true;
         }
         else if (itemTemplate?.Parent == BaseClasses.TACTICAL_COMBO)
@@ -132,7 +136,7 @@ public class BotGeneratorHelper(
             // Get chance from botconfig for bot type, use 50% if no value found
             var lightLaserActiveChance = equipmentSettings?.LaserIsActiveChancePercent ?? 50;
 
-            itemProperties.Light = new UpdLight { IsActive = randomUtil.GetChance100(lightLaserActiveChance), SelectedMode = 0 };
+            itemUpd.Light = new UpdLight { IsActive = randomUtil.GetChance100(lightLaserActiveChance), SelectedMode = 0 };
             hasProperties = true;
         }
 
@@ -144,7 +148,7 @@ public class BotGeneratorHelper(
                     ? equipmentSettings?.NvgIsActiveChanceNightPercent ?? 90
                     : equipmentSettings?.NvgIsActiveChanceDayPercent ?? 15;
 
-            itemProperties.Togglable = new UpdTogglable { On = randomUtil.GetChance100(nvgActiveChance) };
+            itemUpd.Togglable = new UpdTogglable { On = randomUtil.GetChance100(nvgActiveChance) };
             hasProperties = true;
         }
 
@@ -152,12 +156,18 @@ public class BotGeneratorHelper(
         if ((itemTemplate?.Properties?.HasHinge ?? false) && (itemTemplate.Properties.FaceShieldComponent ?? false))
         {
             var faceShieldActiveChance = equipmentSettings?.FaceShieldIsActiveChancePercent ?? 75;
-            itemProperties.Togglable = new UpdTogglable { On = randomUtil.GetChance100(faceShieldActiveChance) };
+            itemUpd.Togglable = new UpdTogglable { On = randomUtil.GetChance100(faceShieldActiveChance) };
             hasProperties = true;
         }
 
-        // Get chance from botconfig for bot type, use 75% if no value found
-        return hasProperties ? itemProperties : null;
+        if (forceStackObjectsCount)
+        {
+            // Ensure property is set
+            itemUpd.StackObjectsCount ??= 1;
+        }
+
+        // Some items (weapon mods) may not have any props, and we don't want an empty Upd object
+        return hasProperties || forceStackObjectsCount ? itemUpd : null;
     }
 
     /// <summary>
@@ -168,17 +178,22 @@ public class BotGeneratorHelper(
     /// <returns>Randomized value from maxHpResource</returns>
     protected double GetRandomizedResourceValue(double maxResource, RandomisedResourceValues? randomizationValues)
     {
-        if (randomizationValues is null)
+        if (randomizationValues is null || randomUtil.GetChance100(randomizationValues.ChanceMaxResourcePercent))
         {
             return maxResource;
         }
 
-        if (randomUtil.GetChance100(randomizationValues.ChanceMaxResourcePercent))
+        if (maxResource.Approx(1))
         {
-            return maxResource;
+            return 1;
         }
 
-        return randomUtil.GetDouble(randomUtil.GetPercentOfValue(randomizationValues.ResourcePercent, maxResource, 0), maxResource);
+        var min = randomUtil.GetPercentOfValue(randomizationValues.ResourcePercent, maxResource, 0);
+
+        // Using food at 0 causes client to error
+        var clampedMin = Math.Clamp(min, 1, min);
+
+        return randomUtil.GetDouble(clampedMin, maxResource);
     }
 
     /// <summary>
@@ -436,7 +451,6 @@ public class BotGeneratorHelper(
     /// <param name="rootItemTplId">Root items tpl id</param>
     /// <param name="itemWithChildren">Item to add</param>
     /// <param name="inventory">Inventory to add item+children into</param>
-    /// <param name="containersIdFull">Container Ids with no space for more items</param>
     /// <returns>ItemAddedResult result object</returns>
     public ItemAddedResult AddItemWithChildrenToEquipmentSlot(
         MongoId botId,
@@ -444,8 +458,7 @@ public class BotGeneratorHelper(
         MongoId rootItemId,
         MongoId rootItemTplId,
         IEnumerable<Item> itemWithChildren,
-        BotBaseInventory inventory,
-        HashSet<string>? containersIdFull = null
+        BotBaseInventory inventory
     )
     {
         var itemWithChildrenList = itemWithChildren.ToList();
@@ -454,12 +467,6 @@ public class BotGeneratorHelper(
         var missingContainerCount = 0;
         foreach (var equipmentSlotId in equipmentSlots)
         {
-            if (containersIdFull is not null && containersIdFull.Contains(equipmentSlotId.ToString()))
-            {
-                // Container has been flagged as full already, skip trying to add item into it
-                continue;
-            }
-
             // Get container from inventory to put item into
             var container = inventory.Items?.FirstOrDefault(item => item.SlotId == equipmentSlotId.ToString());
             if (container is null)

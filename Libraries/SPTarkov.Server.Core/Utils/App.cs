@@ -78,15 +78,6 @@ public class App(
     {
         while (!appLifeTime.ApplicationStopping.IsCancellationRequested)
         {
-            // If the server has failed to start, skip any update calls
-            if (!databaseService.IsDatabaseValid())
-            {
-                await Task.Delay(5000, appLifeTime.ApplicationStopping);
-
-                // Skip forward to the next loop
-                continue;
-            }
-
             foreach (var updateable in onUpdateComponents)
             {
                 var updateableName = updateable.GetType().FullName;

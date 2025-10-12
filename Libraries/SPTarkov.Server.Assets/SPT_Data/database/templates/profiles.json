@@ -6163,7 +6163,8 @@
         ]
       },
       "weaponbuilds": {}
-    }
+    },
+    "customFlags": {}
   },
   "Left Behind": {
     "descriptionLocaleKey": "launcher-profile_leftbehind",
@@ -13426,7 +13427,8 @@
         ]
       },
       "weaponbuilds": {}
-    }
+    },
+    "customFlags": {}
   },
   "Prepare To Escape": {
     "descriptionLocaleKey": "launcher-profile_preparetoescape",
@@ -21797,7 +21799,8 @@
         ]
       },
       "weaponbuilds": {}
-    }
+    },
+    "customFlags": {}
   },
   "Edge Of Darkness": {
     "descriptionLocaleKey": "launcher-profile-edgeofdarkness",
@@ -30295,7 +30298,8 @@
         ]
       },
       "weaponbuilds": {}
-    }
+    },
+    "customFlags": {}
   },
   "Unheard": {
     "descriptionLocaleKey": "launcher-profile-unheard",
@@ -40556,7 +40560,8 @@
         ]
       },
       "weaponbuilds": {}
-    }
+    },
+    "customFlags": {}
   },
   "Tournament": {
     "descriptionLocaleKey": "launcher-profile-tournament",
@@ -42735,7 +42740,8 @@
         ]
       },
       "weaponbuilds": {}
-    }
+    },
+    "customFlags": {}
   },
   "SPT Developer": {
     "descriptionLocaleKey": "launcher-profile_sptdeveloper",
@@ -49243,7 +49249,8 @@
         "setQuestsAvailableForStart": true
       },
       "weaponbuilds": {}
-    }
+    },
+    "customFlags": {}
   },
   "SPT Easy start": {
     "descriptionLocaleKey": "launcher-profile_spteasystart",
@@ -56356,7 +56363,8 @@
         "setQuestsAvailableForStart": false
       },
       "weaponbuilds": {}
-    }
+    },
+    "customFlags": {}
   },
   "SPT Zero to hero": {
     "descriptionLocaleKey": "launcher-profile_sptzerotohero",
@@ -58524,6 +58532,7 @@
         ]
       },
       "weaponbuilds": {}
-    }
+    },
+    "customFlags": {}
   }
 }

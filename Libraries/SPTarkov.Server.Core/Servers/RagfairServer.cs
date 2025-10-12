@@ -40,7 +40,7 @@ public class RagfairServer(
         ProcessExpiredFleaOffers();
 
         // Flag data as stale and in need of regeneration
-        ragfairRequiredItemsService.CacheIsStale();
+        ragfairRequiredItemsService.InvalidateCache();
     }
 
     protected void RefreshTraderOffers()

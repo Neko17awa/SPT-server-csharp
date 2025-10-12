@@ -124,7 +124,7 @@ public class QuestController(
     {
         foreach (var condition in questConditionsToAdd.Where(condition => condition.ConditionType == "SellItemToTrader"))
         {
-            if (pmcData.TaskConditionCounters.TryGetValue(condition.Id, out _))
+            if (pmcData.TaskConditionCounters.ContainsKey(condition.Id))
             {
                 logger.Debug(
                     $"Condition counter: {condition.ConditionType} already exists for quest: {questId} in profile: {pmcData.SessionId}, skipping"
