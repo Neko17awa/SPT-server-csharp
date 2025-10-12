@@ -509,7 +509,7 @@ public class InventoryController(
             return presetHelper.GetBaseItemTpl(request.ItemId);
         }
 
-        if (request.FromOwner.Id == Traders.FENCE)
+        if (Traders.FENCE.Equals(request.FromOwner.Id))
         // Get tpl from fence assorts
         {
             return fenceService.GetRawFenceAssorts().Items.FirstOrDefault(x => x.Id == request.ItemId)?.Template;
@@ -520,7 +520,7 @@ public class InventoryController(
         // get tpl from trader assort
         {
             return databaseService
-                .GetTrader(request.FromOwner.Id.Value)
+                .GetTrader(request.FromOwner.Id)
                 .Assort.Items.FirstOrDefault(item => item.Id == request.ItemId)
                 ?.Template;
         }
@@ -536,7 +536,7 @@ public class InventoryController(
 
             // Try alternate way of getting offer if first approach fails
             var offer =
-                ragfairOfferService.GetOfferByOfferId(request.ItemId) ?? ragfairOfferService.GetOfferByOfferId(request.FromOwner.Id.Value);
+                ragfairOfferService.GetOfferByOfferId(request.ItemId) ?? ragfairOfferService.GetOfferByOfferId(request.FromOwner.Id);
 
             // Try find examine item inside offer items array
             var matchingItem = offer.Items.FirstOrDefault(offerItem => offerItem.Id == request.ItemId);
@@ -551,6 +551,12 @@ public class InventoryController(
 
         // get hideout item
         if (request.FromOwner.Type == "HideoutProduction")
+        {
+            return request.ItemId;
+        }
+
+        // Hideout upgrade
+        if (request.FromOwner.Type == "HideoutUpgrade")
         {
             return request.ItemId;
         }
