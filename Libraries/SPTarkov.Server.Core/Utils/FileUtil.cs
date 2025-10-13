@@ -106,6 +106,10 @@ public class FileUtil
         await WriteFileAsync(filePath, bytes);
     }
 
+    /// <summary>
+    /// Writes a file atomically by first writing to a temporary file, then replacing the original.
+    /// This prevents corruption if the write operation fails or is interrupted.
+    /// </summary>
     public async Task WriteFileAsync(string filePath, byte[] fileContent)
     {
         var directoryPath = Path.GetDirectoryName(filePath);
@@ -124,9 +128,12 @@ public class FileUtil
             )
             {
                 await fs.WriteAsync(fileContent);
+
+                // We flush here so we can be sure it's immediately committed to disk
                 await fs.FlushAsync();
             }
 
+            // Overwrite over the old file
             File.Move(tempFilePath, filePath, overwrite: true);
         }
         catch
