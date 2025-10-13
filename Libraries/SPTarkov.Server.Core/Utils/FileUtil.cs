@@ -1,3 +1,4 @@
+using System.Text;
 using SPTarkov.DI.Annotations;
 
 namespace SPTarkov.Server.Core.Utils;
@@ -101,27 +102,45 @@ public class FileUtil
 
     public async Task WriteFileAsync(string filePath, string fileContent)
     {
-        if (!DirectoryExists(Path.GetDirectoryName(filePath)))
-        {
-            CreateDirectory(Path.GetDirectoryName(filePath));
-        }
-
-        if (!FileExists(filePath))
-        {
-            CreateFile(filePath);
-        }
-
-        await File.WriteAllTextAsync(filePath, fileContent);
+        var bytes = Encoding.UTF8.GetBytes(fileContent);
+        await WriteFileAsync(filePath, bytes);
     }
 
     public async Task WriteFileAsync(string filePath, byte[] fileContent)
     {
-        if (!FileExists(filePath))
+        var directoryPath = Path.GetDirectoryName(filePath);
+
+        if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
         {
-            CreateFile(filePath);
+            Directory.CreateDirectory(directoryPath);
         }
 
-        await File.WriteAllBytesAsync(filePath, fileContent);
+        var tempFilePath = filePath + ".bak";
+
+        try
+        {
+            await using (
+                var fs = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true)
+            )
+            {
+                await fs.WriteAsync(fileContent, 0, fileContent.Length);
+                await fs.FlushAsync();
+            }
+
+            File.Move(tempFilePath, filePath, overwrite: true);
+        }
+        catch
+        {
+            if (File.Exists(tempFilePath))
+            {
+                try
+                {
+                    File.Delete(tempFilePath);
+                }
+                catch { }
+            }
+            throw;
+        }
     }
 
     private void CreateFile(string filePath)
