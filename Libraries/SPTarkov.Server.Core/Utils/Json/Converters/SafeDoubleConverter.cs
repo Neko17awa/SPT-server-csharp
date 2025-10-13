@@ -19,7 +19,7 @@ public class SafeDoubleConverter : JsonConverter<double>
                     try
                     {
                         var decimalValue = reader.GetDecimal();
-                        return decimalValue > 0 ? double.MaxValue : double.MinValue;
+                        return decimalValue > 0 ? double.MaxValue : 0;
                     }
                     catch
                     {
