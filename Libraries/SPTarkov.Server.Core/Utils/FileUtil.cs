@@ -123,7 +123,7 @@ public class FileUtil
                 var fs = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true)
             )
             {
-                await fs.WriteAsync(fileContent, 0, fileContent.Length);
+                await fs.WriteAsync(fileContent);
                 await fs.FlushAsync();
             }
 
