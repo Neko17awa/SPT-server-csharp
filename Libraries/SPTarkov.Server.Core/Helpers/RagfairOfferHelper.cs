@@ -169,7 +169,7 @@ public class RagfairOfferHelper(
 
         // Get highest requirement
         var highestRequirement = levelRequirements.Max();
-        if (highestRequirement < playerLevel)
+        if (playerLevel < highestRequirement)
         {
             // Players level is below matching types requirement, flag as locked
             offer.Locked = true;
