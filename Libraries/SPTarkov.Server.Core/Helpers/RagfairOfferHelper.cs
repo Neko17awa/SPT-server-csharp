@@ -132,6 +132,7 @@ public class RagfairOfferHelper(
             {
                 // Lock the offer if player's level is below the ammo's unlock requirement
                 offer.Locked = true;
+                offer.User.Nickname = $"Unlock level: {unlockLevel}";
 
                 return;
             }
@@ -144,6 +145,7 @@ public class RagfairOfferHelper(
             {
                 // Lock the offer if player's level is below the item's specific requirement
                 offer.Locked = true;
+                offer.User.Nickname = $"Unlock level: {itemLevelRequirement}";
 
                 return;
             }
@@ -156,14 +158,22 @@ public class RagfairOfferHelper(
         }
 
         // Check if the item belongs to any restricted type and if player level is insufficient
-        if (
-            tieredFleaLimitTypes
-                .Where(tieredItemType => itemHelper.IsOfBaseclass(offerItemTpl, tieredItemType))
-                .Any(tieredItemType => playerLevel < tieredFlea.UnlocksType[tieredItemType])
-        )
+        var matchingTypes = tieredFleaLimitTypes.Where(tieredItemType => itemHelper.IsOfBaseclass(offerItemTpl, tieredItemType));
+        if (!matchingTypes.Any())
+        {
+            return;
+        }
+
+        //Get all matches
+        var levelRequirements = tieredFlea.UnlocksType.Where(x => matchingTypes.Contains(x.Key)).Select(x => x.Value);
+
+        // Get highest requirement
+        var highestRequirement = levelRequirements.Max();
+        if (highestRequirement < playerLevel)
         {
             // Players level is below matching types requirement, flag as locked
             offer.Locked = true;
+            offer.User.Nickname = $"Unlock level: {levelRequirements.Max()}";
         }
     }
 
