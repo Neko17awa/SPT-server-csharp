@@ -14,6 +14,7 @@ using SPTarkov.Server.Core.Routers;
 using SPTarkov.Server.Core.Servers;
 using SPTarkov.Server.Core.Services;
 using SPTarkov.Server.Core.Utils;
+using SPTarkov.Server.Core.Utils.Cloners;
 
 namespace SPTarkov.Server.Core.Helpers;
 
@@ -38,7 +39,8 @@ public class RagfairOfferHelper(
     RagfairRequiredItemsService ragfairRequiredItemsService,
     ProfileHelper profileHelper,
     EventOutputHolder eventOutputHolder,
-    ConfigServer configServer
+    ConfigServer configServer,
+    ICloner cloner
 )
 {
     protected const string GoodSoldTemplate = "5bdabfb886f7743e152e867e 0"; // Your {soldItem} {itemCount} items were bought by {buyerNickname}.
@@ -63,8 +65,10 @@ public class RagfairOfferHelper(
         var playerIsFleaBanned = pmcData.PlayerIsFleaBanned(timeUtil.GetTimeStamp());
         var tieredFlea = RagfairConfig.TieredFlea;
         var tieredFleaLimitTypes = tieredFlea.UnlocksType;
-        return ragfairOfferService
-            .GetOffers()
+
+        // Clone offers if tiered flea is enabled as we perform modification of offer data prior to return
+        var offers = tieredFlea.Enabled ? cloner.Clone(ragfairOfferService.GetOffers()) : ragfairOfferService.GetOffers();
+        return offers
             .Where(offer =>
             {
                 var offerRootItem = offer.Items.FirstOrDefault();
@@ -182,7 +186,7 @@ public class RagfairOfferHelper(
         var result = new List<RagfairOffer>();
         foreach (
             var offer in offerIDsForItem
-                .Select(ragfairOfferService.GetOfferByOfferId)
+                .Select(tieredFlea.Enabled ? cloner.Clone(ragfairOfferService.GetOfferByOfferId) : ragfairOfferService.GetOfferByOfferId) // Clone offer when tiered flea enabled as we may modify offer data
                 .Where(offer => PassesSearchFilterCriteria(searchRequest, offer, offer.Items.FirstOrDefault(), pmcData))
         )
         {
@@ -220,7 +224,10 @@ public class RagfairOfferHelper(
 
         foreach (var desiredItemTpl in searchRequest.BuildItems)
         {
-            var matchingOffers = ragfairOfferService.GetOffersOfType(desiredItemTpl.Key);
+            // Clone offers when tiered flea enabled as we may modify the offer
+            var matchingOffers = tieredFlea.Enabled
+                ? cloner.Clone(ragfairOfferService.GetOffersOfType(desiredItemTpl.Key))
+                : ragfairOfferService.GetOffersOfType(desiredItemTpl.Key);
             if (matchingOffers is null)
             // No offers found for this item, skip
             {
