@@ -858,7 +858,7 @@ public class RagfairController(
 
         if (logger.IsLogEnabled(LogLevel.Debug))
         {
-            logger.Debug($"Offer tax to charge: {tax}, pulled from client: {storedClientTaxValue.Count is not null}");
+            logger.Debug($"Offer tax to charge: {tax}, pulled from client: {storedClientTaxValue?.Count is not null}");
         }
 
         // Cleanup of cache now we've used the tax value from it
