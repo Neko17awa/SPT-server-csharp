@@ -32,6 +32,14 @@ public static class Program
         {
             await StartServer(args);
         }
+        catch (SocketException)
+        {
+            Console.WriteLine("=========================================================================================================");
+            Console.WriteLine("You have multiple servers running or another process using port 6969");
+            Console.WriteLine("=========================================================================================================");
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadLine();
+        }
         catch (Exception e)
         {
             Console.WriteLine("=========================================================================================================");
