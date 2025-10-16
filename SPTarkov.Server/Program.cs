@@ -235,7 +235,7 @@ public static class Program
     private static void SetConsoleOutputMode()
     {
         var disableFlag = Environment.GetEnvironmentVariable("DISABLE_VIRTUAL_TERMINAL");
-        
+
         if (!OperatingSystem.IsWindows() || disableFlag == "1" || string.Equals(disableFlag, "true", StringComparison.OrdinalIgnoreCase))
         {
             return;
