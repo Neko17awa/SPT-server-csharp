@@ -234,7 +234,7 @@ public static class Program
 
     private static void SetConsoleOutputMode()
     {
-        if (!OperatingSystem.IsWindows())
+        if (!OperatingSystem.IsWindows() || Environment.GetEnvironmentVariable("DISABLE_VIRTUAL_TERMINAL") == "1")
         {
             return;
         }
